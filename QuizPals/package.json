@@ -1,0 +1,9 @@
+{
+  "name": "quiz-pals",
+  "version": "0.0.0",
+  "description": "QuizPals",
+  "main": "server.js",
+  "author": {
+    "name": ""
+  }
+}
