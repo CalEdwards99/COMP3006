@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Quiz Pals</title>
+</head>
+<body>
+    <h1>Create a Quiz</h1>
+    <p>Create a Quiz Pals Quiz to challenge your friends!.</p>
+
+    <form name="form1" method="POST" action="/CreateQuiz/add">
+    <table>
+        <tr>
+        <td>Group name</td>
+        <td><input type="text" name="GroupName" ></td>
+        </tr>
+        <tr>
+        <td>Group password</td>
+        <td><input type="text" name="Password" ></td>
+        </tr>
+        <tr>
+        <td colspan="2"><input type="submit" value="Save" ></td>
+        </tr>
+    </table>
+    </form>   
+    <%# if(userValue!=null){ %>    
+        <div> Data Entered as <%# userValue.first %>  <%# userValue.last %> </div>
+    <%# } %>
+
+</body>
+</html>
