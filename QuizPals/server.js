@@ -11,6 +11,8 @@ var config = require("./config/config")
 var express = require("express");
 var path = require('path');
 
+var bodyParser = require('body-parser');
+
 var app = express();
 
 const hostname = '127.0.0.1';
@@ -31,6 +33,8 @@ app.set('view engine', 'ejs');
 
 // Enable processing of post forms.
 app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 //app.use(express.static(path.join(__dirname, "statics")));
 
@@ -46,19 +50,19 @@ app.get('/', function (req, res) {
 
 app.get('/JoinQuiz', quizRoute);
 
-app.get('/CreateQuiz', function (req,res) {
-    res.render('pages/CreateQuiz')
-});
+app.get('/CreateQuiz', createQuizRoute)
+
+app.get('/QuizDashboard', quizDashboardRoute)
 
 /* Create - POST method */
 app.post('/CreateQuiz/add', (req, res) => {
     //get the existing user data
-    //const existUsers = getUserData() //TODO:CE implement
+    const existQuizGroups = listQuizGroups(); //TODO:CE implement
 
     //get the new user data from post request
     const quizGroup = req.body
 
-    console.log(req.body)
+    //console.log(req.body)
 
     //check if the userData fields are missing
     if (quizGroup.GroupName == null || quizGroup.Password == null) {
@@ -76,22 +80,37 @@ app.post('/CreateQuiz/add', (req, res) => {
 
     //save the new user data
     //saveUserData(existUsers);  //TODO:CE implement
-    saveQuizGroup(quizGroup)
 
+    //saves the current quiz to MongoDB
+    saveQuizGroup(quizGroup) 
 
-    res.send({ success: true, msg: 'User data added successfully' })
+    var message ="Quiz Group: " + quizGroup.GroupName + " saved to database";
+    let data = { quiz: quizGroup, message: message };
+    //console.log(data);
+
+    return res.render("pages/CreateQuiz", data);
 });
 
-//app.post('/CreateQuiz/add', function (req, res) {
-//    //var quiz = {
-//    //    GroupName: req.body.GroupName,
-//    //    Password: req.body.Password
-//    //}
-//    console.log(student);
-//    res.render('home', {
-//        userValue: student,
-//        topicHead: 'Student Form'
-//    });
+app.post("/JoinQuiz/Login", (req, res) => {
+    var quiz = req.body;
+
+    console.log(req.body);
+
+    console.log(quiz);
+
+    var groupname = quiz.GroupName
+    var password =  quiz.Password
+
+    //db.collection("QuizGroup").find({}).toArray(function (err, returnedQuizzes) {
+    db.collection("QuizGroup").find({ Groupname: quiz.GroupName, Password: quiz.password}).toArray(function (err, returnedQuizzes) {
+        if (err) throw err;
+        console.log(returnedQuizzes);
+
+        return res.render("pages/QuizDashboard")
+        return returnedQuizzes;
+    });
+    });
+    
 
 //let server = http.createServer(function (req, res) {
 //    var q = url.parse(req.url, true)
@@ -112,12 +131,7 @@ app.post('/CreateQuiz/add', (req, res) => {
 
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
-    console.log("connection to MongoDB successful")
-
-    //let userModel = mongoose.model("user", userSchema);
-
-    //console.log(userModel.find());
-
+    console.log("connection to MongoDB successful");
 });
 
 app.listen(port);
@@ -129,18 +143,61 @@ async function quizRoute(request, response) {
     //let users = await usermodel.listAllUsers();
     await db.collection("QuizGroup").find({}).toArray(function (err, returnedQuizzes) {
         if (err) throw err;
-        //console.log("connected to collection now listing")
+
+        let GroupName = "";
+        let Password = "";
+        let quizlogin = { GroupName: GroupName, Password: Password };
         let quizGroups = returnedQuizzes;
-        let data = { quiz: quizGroups };
+
+        //let listedQuizGroups = listQuizGroups();
+        //console.log(listedQuizGroups);
+
+        let data = { quiz: quizGroups, login: quizlogin };
+        console.log(data);
         response.render("pages/JoinQuiz", data);
     });
 }
 
-async function saveQuizGroup(quizgroup) {
-    await db.collection("QuizGroup").insertOne(quizgroup)
+async function createQuizRoute(request, response) {
+
+    let message = "";
+    let quiz = "";
+
+    let data = { message: message, quiz: quiz };
+
+    response.render('pages/CreateQuiz', data);
 }
 
-// end region "functions"
+async function quizDashboardRoute(request, response) {
+    await db.collection("Users").find({}).toArray(function (err, returnedUsers) {
+        if (err) throw err;
+
+        let members = returnedUsers;
+        console.log(returnedUsers);
+
+
+
+        //let listedQuizGroups = listQuizGroups();
+        //console.log(listedQuizGroups);
+
+        let data = { quizGroup: members };
+        console.log(data);
+        response.render("pages/QuizDashboard", data);
+    });
+}
+
+
+//TODO: list all the quiz groups within this function
+function listQuizGroups() {
+    db.collection("QuizGroup").find({}).toArray(function (err, returnedQuizzes) {
+        if (err) throw err;
+        return returnedQuizzes;
+    });
+}
+
+async function saveQuizGroup(quizgroup) {
+        await db.collection("QuizGroup").insertOne(quizgroup)
+}
 
 module.exports = app;
 

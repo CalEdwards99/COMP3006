@@ -2,8 +2,8 @@
   "ExpandedNodes": [
     "",
     "\\QuizPals",
-    "\\QuizPals\\Business"
+    "\\QuizPals\\views",
+    "\\QuizPals\\views\\pages"
   ],
-  "SelectedNode": "\\QuizPals\\Business\\datetime.js",
   "PreviewInSolutionExplorer": false
 }

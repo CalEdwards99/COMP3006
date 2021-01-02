@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -6,21 +6,20 @@
     <title></title>
 </head>
 <body>
-    <h1>Join Quiz Group</h1>
-    <p>Join a Quiz Pals Group and compete with your friends!.</p>
-    <form name="form2" method="POST" action="/JoinQuiz/Join">
+    <h1><%# = quizGroup.GroupName %> Dashboard</h1>
+    <p>View Quizzes Groupmembers and the scoreboard</p>
         <table>
-            <thead><tr><th>Quiz Group</th><th></th></tr></thead>
+            <thead><tr><th>Quiz Group Members</th><th></th></tr></thead>
             <tbody>
-                <% for (i=0; i <quiz.length; i++) { %>
+                <% for (i=0; i <members.length; i++) { %>
                     <tr>
-                        <td><%= quiz[i].GroupName %></td>
+                        <td><%= members[i].name %></td>
+                        <td><%= members[i].User %></td>
                         <td><a href="/QuizGroup/<%= quiz[i]._id %>">Join</a></td>
                     </tr>
                     <% } %>
             </tbody>
         </table>
-        </form>
     <form name="form1" method="POST" action="/JoinQuiz/Login">
         <% if(login!=null) { %>
         
