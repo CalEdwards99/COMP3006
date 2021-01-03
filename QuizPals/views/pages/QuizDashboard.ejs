@@ -6,7 +6,7 @@
     <title></title>
 </head>
 <body>
-    <h1><%# = quizGroup.GroupName %> Dashboard</h1>
+    <h1><%= quizGroup.GroupName %> Dashboard</h1>
     <p>View Quizzes Groupmembers and the scoreboard</p>
         <table>
             <thead><tr><th>Quiz Group Members</th><th></th></tr></thead>
@@ -15,18 +15,9 @@
                     <tr>
                         <td><%= members[i].name %></td>
                         <td><%= members[i].User %></td>
-                        <td><a href="/QuizGroup/<%= quiz[i]._id %>">Join</a></td>
                     </tr>
                     <% } %>
             </tbody>
         </table>
-    <form name="form1" method="POST" action="/JoinQuiz/Login">
-        <% if(login!=null) { %>
-        
-        <input type="text" name="GroupName" value="<%= login.GroupName %>" />
-        <input type="text" name="Password" value="<%= login.Password %>" />
-        <input type="submit" value="Login">
-        <% } %>
-    </form>
 </body>
 </html>

@@ -87,29 +87,47 @@ app.post('/CreateQuiz/add', (req, res) => {
     var message ="Quiz Group: " + quizGroup.GroupName + " saved to database";
     let data = { quiz: quizGroup, message: message };
     //console.log(data);
+    //quizDashboardRoute();
 
-    return res.render("pages/CreateQuiz", data);
+    //return res.render("pages/CreateQuiz", data);
 });
 
-app.post("/JoinQuiz/Login", (req, res) => {
-    var quiz = req.body;
+app.post("/JoinQuiz/Login", quizDashboardRoute);
+//app.post("/JoinQuiz/Login", (req, res) => {
+//    var quiz = req.body;
 
-    console.log(req.body);
+//    var groupname = quiz.GroupName
+//    var password = quiz.Password
 
-    console.log(quiz);
+//    var query = { GroupName: groupname, Password: password };
 
-    var groupname = quiz.GroupName
-    var password =  quiz.Password
+//    //db.collection("QuizGroup").find({}).toArray(function (err, returnedQuizzes) {
+//    db.collection("QuizGroup").find(query).toArray(function (err, returnedQuizzes) {
+//        if (err) throw err;
+//        //console.log(returnedQuizzes);
+//        let group = returnedQuizzes;
+//        console.log(group);
 
-    //db.collection("QuizGroup").find({}).toArray(function (err, returnedQuizzes) {
-    db.collection("QuizGroup").find({ Groupname: quiz.GroupName, Password: quiz.password}).toArray(function (err, returnedQuizzes) {
-        if (err) throw err;
-        console.log(returnedQuizzes);
 
-        return res.render("pages/QuizDashboard")
-        return returnedQuizzes;
-    });
-    });
+
+//        db.collection("User").find({}).toArray(function (err, returnedUsers) {
+//            if (err) throw err;
+
+//            let users = returnedUsers;
+
+//            let data = { members: users , quizGroup, group};
+//            console.log(data);
+
+//            res.render("pages/QuizDashboard", data);
+//        });
+
+        
+//    });
+
+//    //quizDashboardRoute();
+//    //quizDashboardRoute();
+
+//   });
     
 
 //let server = http.createServer(function (req, res) {
@@ -169,19 +187,22 @@ async function createQuizRoute(request, response) {
 }
 
 async function quizDashboardRoute(request, response) {
-    await db.collection("Users").find({}).toArray(function (err, returnedUsers) {
+    //console.log("getting here")
+
+    var quiz = request.body;
+    var groupname = quiz.GroupName;
+    var password = quiz.Password;
+
+      var groupDetails = { GroupName: groupname, Password: password };
+
+    await db.collection("User").find({}).toArray(function (err, returnedUsers) {
         if (err) throw err;
 
-        let members = returnedUsers;
-        console.log(returnedUsers);
+        let users = returnedUsers;
 
-
-
-        //let listedQuizGroups = listQuizGroups();
-        //console.log(listedQuizGroups);
-
-        let data = { quizGroup: members };
+        let data = { members: users, quizGroup: groupDetails};
         console.log(data);
+        
         response.render("pages/QuizDashboard", data);
     });
 }
