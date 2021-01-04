@@ -11,12 +11,12 @@
         <table>
             <thead><tr><th>Quiz Group Members</th><th></th></tr></thead>
             <tbody>
-                <% for (i=0; i <members.length; i++) { %>
+            <p><%= quizGroup.GroupMembers %></p>
+                <%# for (i=0; i <quizGroup.GroupMembers; i++) { %>
                     <tr>
-                        <td><%= members[i].name %></td>
-                        <td><%= members[i].User %></td>
+                        <td><%# = quizGroup[i].GroupMembers %></td>
                     </tr>
-                    <% } %>
+                    <%# } %>
             </tbody>
         </table>
 </body>

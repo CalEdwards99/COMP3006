@@ -145,17 +145,23 @@ app.post("/JoinQuiz/Login", quizDashboardRoute);
 
 //}).listen(port, hostname);
 
-//end starting again
-
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
     console.log("connection to MongoDB successful");
+
+    
+
+    test().then(function () {
+        console.log("Promise Resolved");
+    }).catch(function () {
+        console.log("Promise Rejected");
+    });
+
 });
 
 app.listen(port);
 console.log('Listening on port ' + port);
 
-test
 
 //region functions
 
@@ -193,20 +199,33 @@ async function quizDashboardRoute(request, response) {
 
     var quiz = request.body;
     var groupname = quiz.GroupName;
-    var password = quiz.Password;
+    //var password = quiz.Password;
 
-      var groupDetails = { GroupName: groupname, Password: password };
+    var groupDetails = { GroupName: groupname};
 
-    await db.collection("User").find({}).toArray(function (err, returnedUsers) {
+    await db.collection("QuizGroup").find(groupDetails).toArray(function (err, returnedQuizGroup) {
         if (err) throw err;
 
-        let users = returnedUsers;
+        let quizGroupDetails = returnedQuizGroup;
+        console.log(quizGroupDetails)
 
-        let data = { members: users, quizGroup: groupDetails};
+
+        let data = { quizGroup : quizGroupDetails };
         console.log(data);
-        
+
         response.render("pages/QuizDashboard", data);
     });
+
+    //await db.collection("User").find({}).toArray(function (err, returnedUsers) {
+    //    if (err) throw err;
+
+    //    let users = returnedUsers;
+
+    //    let data = { members: users, quizGroup: groupDetails};
+    //    console.log(data);
+        
+    //    response.render("pages/QuizDashboard", data);
+    //});
 }
 
 async function quizDashboardRoute2(request, response) {
@@ -230,26 +249,21 @@ async function quizDashboardRoute2(request, response) {
     });
 }
 
-function test() {
-    //console.log("getting here")
+async function test() {
 
-    //var quiz = request.body;
-
-    
     var groupname = "Computing Revision";
-    console.log(groupname)
-    //var password = quiz.Password;
 
-    //var groupDetails = { GroupName: groupname, Password: password };
-    var query = { GroupName: groupname};
+    var query = { GroupName: groupname };
 
-    db.collection("Quizgroup").find({query}).toArray(function (err, returnedUsers) {
+    //var quizGroups = await db.collection("QuizGroup").find({}).toArray
+    await db.collection("QuizGroup").find(query).toArray(function (err, returnedUsers) {
         if (err) throw err;
 
-        console.log(returnedUsers);
+         console.log(returnedUsers);    
 
-        //response.render("pages/QuizDashboard", data);
+         return;
     });
+
 }
 
 
@@ -264,6 +278,8 @@ function listQuizGroups() {
 async function saveQuizGroup(quizgroup) {
         await db.collection("QuizGroup").insertOne(quizgroup)
 }
+
+
 
 module.exports = app;
 
