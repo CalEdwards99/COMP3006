@@ -5,26 +5,26 @@ var url = require("url");
 
 
 var mongo = require("mongodb");
-const mongoose = require("mongoose");
+//const mongoose = require("mongoose");
 var config = require("./config/config")
 
 var express = require("express");
 var path = require('path');
 
 var bodyParser = require('body-parser');
+const { group } = require('console');
 
 var app = express();
 
 const hostname = '127.0.0.1';
 var port = process.env.PORT || 9000;
 
-var Schema = mongoose.Schema;
-
-//starting again
+//var Schema = mongoose.Schema;
 
 // Connect to the Mongo database using Mongoose.
-mongoose.connect(config.uri, { useUnifiedTopology: true, useNewUrlParser: true });
-var db = mongoose.connection;
+//mongoose.connect(config.uri, { useUnifiedTopology: true, useNewUrlParser: true });
+//var db = mongoose.connection;
+var db = config.db;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -57,7 +57,7 @@ app.get('/QuizDashboard', quizDashboardRoute)
 /* Create - POST method */
 app.post('/CreateQuiz/add', (req, res) => {
     //get the existing user data
-    const existQuizGroups = listQuizGroups(); //TODO:CE implement
+    //const existQuizGroups = listQuizGroups(); //TODO:CE implement
 
     //get the new user data from post request
     const quizGroup = req.body
@@ -155,6 +155,8 @@ db.once('open', function () {
 app.listen(port);
 console.log('Listening on port ' + port);
 
+test
+
 //region functions
 
 async function quizRoute(request, response) {
@@ -204,6 +206,49 @@ async function quizDashboardRoute(request, response) {
         console.log(data);
         
         response.render("pages/QuizDashboard", data);
+    });
+}
+
+async function quizDashboardRoute2(request, response) {
+    //console.log("getting here")
+
+    var quiz = request.body;
+    var groupname = quiz.GroupName;
+    var password = quiz.Password;
+
+    var groupDetails = { GroupName: groupname, Password: password };
+
+    await db.collection("User").find({}).toArray(function (err, returnedUsers) {
+        if (err) throw err;
+
+        let users = returnedUsers;
+
+        let data = { members: users, quizGroup: groupDetails };
+        console.log(data);
+
+        response.render("pages/QuizDashboard", data);
+    });
+}
+
+function test() {
+    //console.log("getting here")
+
+    //var quiz = request.body;
+
+    
+    var groupname = "Computing Revision";
+    console.log(groupname)
+    //var password = quiz.Password;
+
+    //var groupDetails = { GroupName: groupname, Password: password };
+    var query = { GroupName: groupname};
+
+    db.collection("Quizgroup").find({query}).toArray(function (err, returnedUsers) {
+        if (err) throw err;
+
+        console.log(returnedUsers);
+
+        //response.render("pages/QuizDashboard", data);
     });
 }
 
