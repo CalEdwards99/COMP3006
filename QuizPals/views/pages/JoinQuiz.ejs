@@ -8,25 +8,35 @@
 <body>
     <h1>Join Quiz Group</h1>
     <p>Join a Quiz Pals Group and compete with your friends!.</p>
-    <form name="form2" method="POST" action="/JoinQuiz/Join">
+    
+    <% if(quiz!=null) { %>
         <table>
             <thead><tr><th>Quiz Group</th><th></th></tr></thead>
             <tbody>
                 <% for (i=0; i <quiz.length; i++) { %>
                     <tr>
+                        <form name="form2" method="POST" action="/quizgroup/login">
+                        <input type="hidden" id="_id" name="_id" value="<%= quiz[i]._id %>">
                         <td><%= quiz[i].GroupName %></td>
-                        <td><a href="/QuizGroup/<%= quiz[i]._id %>">Join</a></td>
+                        <!--<td><a href="/joinquizgroup<%# quiz[i]._id %>">Join</a></td> -->              
+                        <td><input type="submit" value="Join"></td>
+                        </form>
                     </tr>
                     <% } %>
             </tbody>
-        </table>
-        </form>
-    <form name="form1" method="POST" action="/JoinQuiz/Login">
+        </table>    
+         <% } %>
+    <form name="form1" method="POST" action="/quizgroup/dashboard">
         <% if(login!=null) { %>
-        
-        <input type="text" name="GroupName" value="<%= login.GroupName %>" />
-        <input type="text" name="Password" value="<%= login.Password %>" />
+        <% for (i=0; i <login.length; i++) { %>
+        <p>Groupname</p>
+        <input type="hidden" id="_id" name="_id" value="<%= login[i]._id %>">
+        <input type="text" id="inputGroupName" value="<%= login[i].GroupName %>" />
+        <input type="hidden" id="password" name="password" value="<%= login[i].Password %>">
+        <p> Password </p>
+        <input type="password" id="inputPassword" />
         <input type="submit" value="Login">
+         <% } %>
         <% } %>
     </form>
 </body>

@@ -44,15 +44,22 @@ app.use(express.static('./public'));
 //this line is required to parse the request body
 app.use(express.json())
 
+//this line defines the routers
+var quizGroupRouter = require('./routes/quizgroup-route');
+app.use('/QuizGroup', quizGroupRouter);
+
+var userRouter = require('./routes/users-route');
+app.use('/User', userRouter);
+
 app.get('/', function (req, res) {
-    res.render('pages/Dashboard')
+    res.render('pages/login')
 });
 
 app.get('/JoinQuiz', quizRoute);
 
 app.get('/CreateQuiz', createQuizRoute)
 
-app.get('/QuizDashboard', quizDashboardRoute)
+app.get("/QuizDashboard" , quizDashboardRoute);
 
 /* Create - POST method */
 app.post('/CreateQuiz/add', (req, res) => {
@@ -89,45 +96,39 @@ app.post('/CreateQuiz/add', (req, res) => {
     //console.log(data);
     //quizDashboardRoute();
 
-    //return res.render("pages/CreateQuiz", data);
+    return res.render("pages/CreateQuiz", data);
 });
 
 app.post("/JoinQuiz/Login", quizDashboardRoute);
-//app.post("/JoinQuiz/Login", (req, res) => {
-//    var quiz = req.body;
+////app.post("/JoinQuiz/Login", (req, res) => {
+////    var quiz = req.body;
 
-//    var groupname = quiz.GroupName
-//    var password = quiz.Password
+////    console.log(quiz)
 
-//    var query = { GroupName: groupname, Password: password };
+////    var groupname = quiz.GroupName
+////    var password = quiz.Password
 
-//    //db.collection("QuizGroup").find({}).toArray(function (err, returnedQuizzes) {
-//    db.collection("QuizGroup").find(query).toArray(function (err, returnedQuizzes) {
-//        if (err) throw err;
-//        //console.log(returnedQuizzes);
-//        let group = returnedQuizzes;
-//        console.log(group);
+////    var query = { GroupName: groupname };
 
+////    quizDashboardRoute();
 
+////    return;
 
-//        db.collection("User").find({}).toArray(function (err, returnedUsers) {
-//            if (err) throw err;
+////    db.collection("QuizGroup").find({}).toArray(function (err, returnedQuizzes) {
+////    await db.collection("QuizGroup").find(query).toArray(function (err, returnedQuizzes) {
+////        if (err) throw err;
+////        console.log(returnedQuizzes);
+////        let group = returnedQuizzes;
+////        console.log(group);
 
-//            let users = returnedUsers;
+////        let data = { quizGroup, group };
+////        console.log(data);
 
-//            let data = { members: users , quizGroup, group};
-//            console.log(data);
-
-//            res.render("pages/QuizDashboard", data);
-//        });
-
+////        return res.render("pages/QuizDashboard", data);
         
-//    });
+////    });
 
-//    //quizDashboardRoute();
-//    //quizDashboardRoute();
-
-//   });
+////   });
     
 
 //let server = http.createServer(function (req, res) {
@@ -149,12 +150,10 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
     console.log("connection to MongoDB successful");
 
-    
-
     test().then(function () {
-        console.log("Promise Resolved");
+        console.log("Test in progress");
     }).catch(function () {
-        console.log("Promise Rejected");
+        console.log("Test could not be complete");
     });
 
 });
@@ -174,9 +173,6 @@ async function quizRoute(request, response) {
         let Password = "";
         let quizlogin = { GroupName: GroupName, Password: Password };
         let quizGroups = returnedQuizzes;
-
-        //let listedQuizGroups = listQuizGroups();
-        //console.log(listedQuizGroups);
 
         let data = { quiz: quizGroups, login: quizlogin };
         console.log(data);
@@ -199,6 +195,7 @@ async function quizDashboardRoute(request, response) {
 
     var quiz = request.body;
     var groupname = quiz.GroupName;
+    console.log(groupname)
     //var password = quiz.Password;
 
     var groupDetails = { GroupName: groupname};
@@ -207,8 +204,6 @@ async function quizDashboardRoute(request, response) {
         if (err) throw err;
 
         let quizGroupDetails = returnedQuizGroup;
-        console.log(quizGroupDetails)
-
 
         let data = { quizGroup : quizGroupDetails };
         console.log(data);
@@ -216,37 +211,6 @@ async function quizDashboardRoute(request, response) {
         response.render("pages/QuizDashboard", data);
     });
 
-    //await db.collection("User").find({}).toArray(function (err, returnedUsers) {
-    //    if (err) throw err;
-
-    //    let users = returnedUsers;
-
-    //    let data = { members: users, quizGroup: groupDetails};
-    //    console.log(data);
-        
-    //    response.render("pages/QuizDashboard", data);
-    //});
-}
-
-async function quizDashboardRoute2(request, response) {
-    //console.log("getting here")
-
-    var quiz = request.body;
-    var groupname = quiz.GroupName;
-    var password = quiz.Password;
-
-    var groupDetails = { GroupName: groupname, Password: password };
-
-    await db.collection("User").find({}).toArray(function (err, returnedUsers) {
-        if (err) throw err;
-
-        let users = returnedUsers;
-
-        let data = { members: users, quizGroup: groupDetails };
-        console.log(data);
-
-        response.render("pages/QuizDashboard", data);
-    });
 }
 
 async function test() {

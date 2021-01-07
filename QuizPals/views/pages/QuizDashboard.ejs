@@ -6,18 +6,24 @@
     <title></title>
 </head>
 <body>
-    <h1><%= quizGroup.GroupName %> Dashboard</h1>
-    <p>View Quizzes Groupmembers and the scoreboard</p>
+    <!-- <h1><%#= quizGroup %></h1> -->
+    <% for (i=0; i <quizGroup.length; i++) { %>
+                    
+                        <h1><%= quizGroup[i].GroupName %> : Dashboard</h1>
+                    
+                    <% } %>
+    <p>View Quizzes Group-members and the scoreboard</p>
         <table>
             <thead><tr><th>Quiz Group Members</th><th></th></tr></thead>
-            <tbody>
-            <p><%= quizGroup.GroupMembers %></p>
-                <%# for (i=0; i <quizGroup.GroupMembers; i++) { %>
+            <tbody>           
+                <% for (i=0; i <quizGroup.length; i++) { %>
                     <tr>
-                        <td><%# = quizGroup[i].GroupMembers %></td>
+                        <td><%= quizGroup[i].GroupMembers %></td>
                     </tr>
-                    <%# } %>
+                    <% } %>
             </tbody>
         </table>
+
+        <>
 </body>
 </html>

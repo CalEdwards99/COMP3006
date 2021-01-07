@@ -6,11 +6,24 @@
     <title>Quiz Pals</title>
 </head>
 <body>
+<form name="form1" method="POST" action="/user/create">
     <h1>Sign-up</h1>
-    <p>Name</p><input type="text" />
-    <p>Username</p><input type="text" />
+
+    <p>Full Name</p>
+    <input type="text" name="fullname" value="<%= user.FullName %>" />
+    <p>Username</p>
+    <input type="text" name="username" value="<%= user.Username %>"/>
+
     <p>Password</p>
-    <button type="button">Submit</button>
+    <input type="password" name="password" />
+    <p>Confirm Password</p>
+    <input type="password" name="confirmPassword"/>
+    <input type="submit" value="Submit">
+    </form>
+
+    <% if(message!=null) { %>
+    <p> <%= message.message %> </p>
+    <% } %>
 
 </body>
 </html>

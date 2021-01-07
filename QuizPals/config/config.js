@@ -8,6 +8,8 @@ const uri = "mongodb+srv://dbUser:COMP3006pw@cluster0.8a4if.mongodb.net/QuizPals
 mongoose.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true });
 var db = mongoose.connection;
 
+
+
 exports.uri = uri;
 exports.db = db;
 

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CRUD Operation</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <style>
+        table, td, th {  
+          border: 1px solid #ddd;
+          text-align: left;}
+        table {
+          border-collapse: collapse;
+          width: 50%;}
+        .table-data{
+          position: relative;
+          left:150px;
+          top:100px;}
+        th, td {
+          padding: 15px;}
+        </style>
+  </head>
+  <body>
+    <% if(typeof editData!='undefined'){ %>
+        <h1><%= editData %></h1>
+        <form method="POST" action="/crud/edit/<%=editId %>">
+            <input type="submit" value="Update Data">
+        </form>
+        <% } else{ %>
+            <h1>Crud Operation</h1>
+            <h3>This is View Page</h3>
+            <h4>Create Data</h4>
+            <form method="POST" action="/quizgroup/create">
+                <input type="submit" value="Create Data">
+            </form>
+        <% } %>
+        <br><br> <br><br>
+        <table border="1" >
+            <tr>
+                <th><a href="/crud/form">Crud Form</a></th>
+                <th><a href="/crud/fetch">Fetch Data</a></th>
+                <th><a href="/crud/edit/5">Edit Data</a></th>
+                <th><a href="/crud/delete/5">Delete Data</a></th>
+            </tr>
+            </table>
+  </body>
+</html>
