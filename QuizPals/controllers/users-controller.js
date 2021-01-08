@@ -1,5 +1,6 @@
 var userModel = require('../models/users-model');
-
+var passport = require('../config/passport');
+const bcrypt = require('bcrypt');
 //Private functions
 
 
@@ -22,10 +23,16 @@ module.exports = {
         res.render('pages/signup', pageData);
     },
 
-    signInNavigation: function (req, res) {
+    signInNavigation: function (req, res, next) {
+
+        let errors = [];
 
         var username = req.body.username;
         var password = req.body.password;
+
+        if (!username || !password) {
+            errors.push({ msg: "Please fill all fields" })
+        }
 
         var user = {
             UserName: username,
@@ -33,78 +40,87 @@ module.exports = {
         }
 
         userModel.CheckUserExists(user, function (userCount) {
-            console.log(userCount)
-            //the username and password matched a username and password in the database
-            if (userCount == 1) {
-
-                userModel.FindUser(user, function (returnedUser) {
-
-                    console.log("Navigated to the dashboard page");
-                    res.render('pages/dashboard', user);
-
-                })
-
-            //the username and password did not match in the database
-            } else {
-                var message = "Login failed"
-                res.render('pages/login')
-                console.log(message)
+            if (userCount !== 1) {
+                errors.push({ msg: "User not found / password incorrect" })
             }
         }) 
+
+        if (errors.length > 0) {
+            res.render('pages/login', {
+                errors: errors,
+                user: user
+            })
+        } else { // no errors so navigate to the dashboard
+
+
+            userModel.FindUser(user, function (returnedUser) {
+                console.log("Navigated to the dashboard page");
+                res.render('pages/dashboard', user);
+            })
+
+        }
     },
 
     findUser: function (req, res) {
 
-        //console.log("Navigated to the dashboard page");
-        //res.render('/pages/dashboard');
     },
 
     createUser: function (req, res) {
+        let errors = [];
 
         var fullname = req.body.fullname;
         var username = req.body.username;
         var confirmPassword = req.body.confirmPassword;
         var password = req.body.password;
 
+            if (!fullname || !username || !password || !confirmPassword ) {
+                errors.push({ msg: "Please fill all fields" })
+            }
 
-        const user = {
-            FullName: fullname,
-            UserName: username,
-            Password: password
-        }
+            const user = {
+                FullName: fullname,
+                UserName: username,
+                Password: password
+            }
 
-        //console.log(user)
-
-        if (password == confirmPassword) {
+            if (password !== confirmPassword) {
+                errors.push({ msg: "Please ensure passwords match" });
+            }
 
             userModel.CheckUserExists({ UserName: username }, function (usercount) {
-                console.log(usercount)
                 if (usercount > 0) {
-                    var message = "Username is already in use";
-                    var userinfo = { Fullname: fullname };
-                    let pageData = { user: userinfo, message: message };
-                    console.log(message)
-                    res.render("pages/signup", pageData)
-                } else {
-
-                    userModel.createUser(user, function (returningData) {
-                        var message = "New User: " + returningData.UserName + " saved to database";
-                        let pageData = { user: returningData, message: message };
-
-                        res.render("pages/signup", pageData)
-                        console.log("New User Added");
-                    });
-
+                    errors.push({ msg: "Username is already in use" });
                 }
-           
             });
-        } else {
 
-            var message = "Passwords did not match please try again";
-            console.log(message)
-            let pageData = { user: user, message: message };
-            res.render("pages/signup", pageData)
-        }
+
+            if (errors.length > 0) {
+                res.render('pages/signup', {
+                    errors: errors,
+                    user: user
+                })
+            } else { // no errors so create a new user
+       
+                //hash password
+                bcrypt.genSalt(10, (err, salt) =>
+                bcrypt.hash(user.Password, salt,
+                    (err, hash) => {
+                        if (err) throw err;
+                        //save pass to hash
+                        user.Password = hash;
+
+                        //save user
+                        userModel.createUser(user, function (returningData) {
+                            errors.push({ msg: "New User: " + returningData.UserName + " saved to database" });
+                            req.flash('success_msg', 'You have now registered!')
+                            let pageData = { user: returningData, errors: errors };
+                            res.render("pages/signup", pageData)
+                            console.log("New User Added");
+                        });
+
+
+                    }));
+            } //ELSE statement ends here
     },
 
     editUser: function (req, res) {

@@ -1,24 +1,24 @@
 var config = require("../config/config");
 var mongoose = require('mongoose');
+const passportLocalMongoose = require("passport-local-mongoose");
+
 const { ObjectID } = require("mongodb");
 var db = config.db;
 
 // create an schema
 var userSchema = new mongoose.Schema({
-    _id: ObjectID,
     FullName: String,
     UserName:String,
     Password: String
 });
 
+userSchema.plugin(passportLocalMongoose, { usernameField: 'UserName' });
 
 userTable = mongoose.model('User', userSchema);
 
 module.exports = {
 
     userTable,
-
-    //"REGION" CRUD operations
 
     createUser: function (user, callback) {
 
