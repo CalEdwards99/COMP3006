@@ -7,7 +7,7 @@ var router = express.Router();
 router.get('/signup', userController.signUpNavigation);
 
 // sign in route
-router.get('/login', userController.signInNavigation);
+router.post('/login', userController.signInNavigation);
 
 // creates a user route
 router.post('/create', userController.createUser);

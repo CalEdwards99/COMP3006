@@ -23,6 +23,7 @@ module.exports = {
     },
 
     signInNavigation: function (req, res) {
+
         var username = req.body.username;
         var password = req.body.password;
 
@@ -31,11 +32,11 @@ module.exports = {
             Password: password
         }
 
-        //userModel.CheckUserExists(user, function (userCount) {
-        userModel.FindUser(user, function (userCount) {
+        userModel.CheckUserExists(user, function (userCount) {
             console.log(userCount)
-            console.log(userCount.UserName)
-            //if (userCount.UserName ) {
+            //the username and password matched a username and password in the database
+            if (userCount == 1) {
+
                 userModel.FindUser(user, function (returnedUser) {
 
                     console.log("Navigated to the dashboard page");
@@ -43,12 +44,13 @@ module.exports = {
 
                 })
 
-                
-            //}
-        })
-        
-    
-        
+            //the username and password did not match in the database
+            } else {
+                var message = "Login failed"
+                res.render('pages/login')
+                console.log(message)
+            }
+        }) 
     },
 
     findUser: function (req, res) {

@@ -1,9 +1,11 @@
 var config = require("../config/config");
 var mongoose = require('mongoose');
+const { ObjectID } = require("mongodb");
 var db = config.db;
 
 // create an schema
 var userSchema = new mongoose.Schema({
+    _id: ObjectID,
     FullName: String,
     UserName:String,
     Password: String
@@ -13,6 +15,8 @@ var userSchema = new mongoose.Schema({
 userTable = mongoose.model('User', userSchema);
 
 module.exports = {
+
+    userTable,
 
     //"REGION" CRUD operations
 
@@ -48,8 +52,7 @@ module.exports = {
     },
 
     CheckUserExists: function (query, callback) {        
-        var user = userTable.find(query);
-        console.log(user)
+        var user = userTable.find(query).countDocuments();
         user.exec(function (err, data) {
             if (err) throw err;
             return callback(data);
