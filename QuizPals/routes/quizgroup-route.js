@@ -5,7 +5,7 @@ var quizGroupController = require('../controllers/quizgroup-controller');
 var router = express.Router();
 
 // curd form route
-router.get('/form', quizGroupController.quizGroupForm);
+router.get('/navCreateQuizGroup', quizGroupController.quizGroupForm);
 // create data route
 router.post('/create', quizGroupController.createQuizGroup);
 // display data route

@@ -9,26 +9,16 @@
     <h1>Create a Quiz</h1>
     <p>Create a Quiz Pals Quiz to challenge your friends!.</p>
 
-    <form name="form1" method="POST" action="/quizGroup/create">
-        <table>
-            <% if(quiz!=null){ %>
-            <tr>
-                <td>Group name</td>
-                <td><input type="text" name="GroupName" value="<%= quiz.GroupName %>"></td>
-            </tr>
-            <tr>
-                <td>Group password</td>
-                <td><input type="text" name="Password" value="<%= quiz.Password %>"></td>
-            </tr>
-            <tr>
-                <td colspan="2"><input type="submit" value="Save"></td>
-            </tr>
-            <% } %>
-        </table>
-    </form>   
-    <% if(message!=null){ %>    
-        <div> <%= message %></div>
-    <% } %>
+    <form name="form1" method="POST" action="/quiz/create">
 
+    <input type="text" name="QuizTitle">
+    </br>
+        <input type="text" name="QuestionTitle">
+        <input type="text" name="Answer1">
+        <input type="text" name="Answer2">
+        <input type="text" name="Answer3">
+        <input type="text" name="Answer4">
+
+    </form>   
 </body>
 </html>

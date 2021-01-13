@@ -11,8 +11,14 @@ module.exports = {
 
     //TODO:CE Populate quiz group page
     quizGroupForm: function (req, res) {
-        res.render('pages/quizGroup');
+
+        var noData = { GroupName: "", Password: ""} //no groupname or password when loading
+        var message = ""; //no message when loading page
+        let pageData = { quiz: noData, message: message };
+
+        res.render('pages/CreateQuizGroup', pageData);
     },
+
     createQuizGroup: function (req, res) {
 
         var quizGroup = req.body;
@@ -22,7 +28,7 @@ module.exports = {
             var message = "Quiz Group: " + returningData.GroupName + " saved to database";
             let pageData = { quiz: returningData, message: message };
 
-            res.render("pages/CreateQuiz", pageData)
+            res.render("pages/CreateQuizGroup", pageData)
             console.log("New QuizGroup Added");
         });
     },

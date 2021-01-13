@@ -7,7 +7,7 @@
 </head>
 <body>
     <h1>Create a Quiz</h1>
-    <p>Create a Quiz Pals Quiz to challenge your friends!.</p>
+    <p>Create a Quiz Pals Quiz Group to challenge your friends!.</p>
 
     <form name="form1" method="POST" action="/CreateQuiz/add">
         <table>
@@ -18,7 +18,11 @@
             </tr>
             <tr>
                 <td>Group password</td>
-                <td><input type="text" name="Password" value="<%= quiz.Password %>"></td>
+                <td><input type="password" name="Password" value="<%= quiz.Password %>"></td>
+            </tr>
+            <tr>
+                <td>Confirm password</td>
+                <td><input type="password" name="ConfirmPassword" value=""></td>
             </tr>
             <tr>
                 <td colspan="2"><input type="submit" value="Save"></td>

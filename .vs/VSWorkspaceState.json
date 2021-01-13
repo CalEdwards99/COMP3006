@@ -2,8 +2,14 @@
   "ExpandedNodes": [
     "",
     "\\QuizPals",
+    "\\QuizPals\\config",
+    "\\QuizPals\\controllers",
+    "\\QuizPals\\models",
+    "\\QuizPals\\routes",
     "\\QuizPals\\views",
-    "\\QuizPals\\views\\pages"
+    "\\QuizPals\\views\\pages",
+    "\\QuizPals\\views\\partials"
   ],
+  "SelectedNode": "\\QuizPals\\server.js",
   "PreviewInSolutionExplorer": false
 }

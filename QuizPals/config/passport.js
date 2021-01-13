@@ -7,16 +7,26 @@ module.exports = function (passport) {
         new LocalStrategy({ usernameField: 'UserName' }, (username, password, done) => {
             //match user
             UserModel.FindUser({ UserName: username }, function (returnedUser) {
+                //var user = UserModel.userTable
+
+                //new user = returnedUser
+                for (let i in returnedUser) {
+                    var userPassword = returnedUser[i].password;
+                }
+                
+
                 if (!returnedUser) {
                     return done(null, false, { message: 'No account for this username' });
                 }
 
+                
+
                 //match the password
-                bcrypt.compare(password, user.passport, (err, isMatch) => {
+                bcrypt.compare(password, userPassword, (err, isMatch) => {
                     if (err) throw err;
 
                     if (isMatch) {
-                        return done(null, user);
+                        return done(null, returnedUser);
                     } else {
                         return done(null, false, { message: 'Password is incorrect' });
                     }
@@ -25,33 +35,18 @@ module.exports = function (passport) {
 
             });
 
-
-            //User.findOne({ email: email })
-            //    .then((user) => {
-            //        if (!user) {
-            //            return done(null, false, { message: 'that email is not registered' });
-            //        }
-            //        //match pass
-            //        bcrypt.compare(password, user.password, (err, isMatch) => {
-            //            if (err) throw err;
-
-            //            if (isMatch) {
-            //                return done(null, user);
-            //            } else {
-            //                return done(null, false, { message: 'pass incorrect' });
-            //            }
-            //        })
-            //    })
-            //    .catch((err) => { console.log(err) })
         })
 
     )
     passport.serializeUser(function (user, done) {
+        console.log("serializing user")
         done(null, user.id);
     });
 
     passport.deserializeUser(function (id, done) {
-        UserModel.FindUser(id, function (err, user) {
+        console.log("deserializing user")
+
+        UserModel.FindUser({ _id: id }, function (err, user) {
             done(err, user);
         });
     });
