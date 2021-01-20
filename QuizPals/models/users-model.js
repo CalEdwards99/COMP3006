@@ -3,37 +3,40 @@ var mongoose = require('mongoose');
 const passportLocalMongoose = require("passport-local-mongoose");
 
 const { ObjectID } = require("mongodb");
+const { user } = require("../app/models/user");
 var db = config.db;
 
 // create an schema
-var userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     FullName: String,
     UserName:String,
     Password: String
 });
 
-userSchema.plugin(passportLocalMongoose, { usernameField: 'UserName' });
+//userSchema.plugin(passportLocalMongoose, { usernameField: 'UserName' });
 
 userTable = mongoose.model('User', userSchema);
+//var User : mongoose.model<any> = mongoose.model('User', userSchema);
 
 module.exports = {
+
+    userSchema,
 
     userTable,
 
     createUser: function (user, callback) {
-
-        console.log(user);
-
+        
         newUser = new userTable(user);
         newUser.save(function (err, user) {
-            console.log(user);
             if (err) throw err;
+            console.log("New User Created in User Model")
             return callback(user);
         })
 
     },
 
     ListAllUsers: function (callback) {
+
         var quizGroups = QuizGroupTable.find({});
         quizGroups.exec(function (err, data) {
             if (err) throw err;
@@ -43,6 +46,7 @@ module.exports = {
     },
 
     FindUser: function (query, callback) {
+        
         var user = userTable.find(query);
         user.exec(function (err, data) {
             if (err) throw err;
@@ -66,17 +70,35 @@ module.exports = {
         return data;
     },
 
-    updateUser: function () {
+    updateUser: function (user, callback) {
 
-        data = "Form data was updated";
-        return data;
+        newUser = new userTable(user);
+        newUser.save(function (err, user) {
+            if (err) throw err;
+            console.log("New User Created in User Model")
+            return callback(user);
+        })
+
     },
 
-    deleteUser: function () {
+    deleteUser: function (deleteUser, callback) {
+        user = new userTable(deleteUser);
 
-        data = "Form data was deleted";
-        return data;
+        user.deleteOne(function (err) {
+        //        if (err) throw err;
+        //        console.log("User Deleted in User Model")
+        //        return callback(user);
+        })
     }
+
+    //   deleteData: function (deleteId, callback) {
+
+    //    userData = userTable.findByIdAndDelete(deleteId);
+    //    userData.exec(function (err, data) {
+    //        if (err) throw err;
+    //        return callback(data);
+    //    })
+    //}
 
     //"END REGION"
 

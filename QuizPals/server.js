@@ -97,6 +97,9 @@ app.use('/User', userRouter);
 var quizRouter = require('./routes/quiz-route');
 app.use('/Quiz', quizRouter);
 
+var quizQuestionRouter = require('./routes/quizquestions-route');
+app.use('/QuizQuestion', quizQuestionRouter);
+
 app.get('/', function (req, res) {
     res.render('pages/login')
 });

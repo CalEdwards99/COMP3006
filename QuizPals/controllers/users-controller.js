@@ -1,7 +1,27 @@
 var userModel = require('../models/users-model');
 var passport = require('../config/passport');
 const bcrypt = require('bcrypt');
-//Private functions
+
+
+function convertReturnedUserToLocal(returnedUser) {
+
+    //Private functions
+    var localUser = {
+        _id: String,
+        FullName: String,
+        UserName: String,
+        Password: String
+    }
+
+    for (let i in returnedUser) {
+        localUser._id = returnedUser[i]._id
+        localUser.FullName = returnedUser[i].FullName
+        localUser.UserName = returnedUser[i].UserName
+        localUser.Password = returnedUser[i].Password
+        console.log(localUser)
+    }
+    return localUser
+};
 
 
 
@@ -52,10 +72,18 @@ module.exports = {
             })
         } else { // no errors so navigate to the dashboard
 
+            var query = {UserName: user.UserName }
 
-            userModel.FindUser(user, function (returnedUser) {
+            userModel.FindUser(query, function (returnedUser) {
+
+                var localUser = convertReturnedUserToLocal(returnedUser)
+
+                console.log(localUser)
+
                 console.log("Navigated to the dashboard page");
-                res.render('pages/dashboard', user);
+                res.render('pages/dashboard',
+                    { localUser: localUser}
+                );
             })
 
         }
@@ -138,6 +166,26 @@ module.exports = {
     //Bespoke functions 
     insertUserToQuizGroup: function (req, res) {
 
+    },
+
+    convertReturnedUserToLocal : function (returnedUser) {
+
+    //Private functions
+    var localUser = {
+        _id: String,
+        FullName: String,
+        UserName: String,
+        Password: String
     }
+
+    for (let i in returnedUser) {
+        localUser._id = returnedUser[i]._id
+        localUser.FullName = returnedUser[i].FullName
+        localUser.UserName = returnedUser[i].UserName
+        localUser.Password = returnedUser[i].Password
+        console.log(localUser)
+    }
+    return localUser
+}
 
 }

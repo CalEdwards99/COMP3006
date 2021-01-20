@@ -1,0 +1,12 @@
+<% if(typeof localUser!= 'undefined') { %>
+<input type="hidden" name="localUserID" value="<%= localUser._id %>"/>
+<input type="hidden" name="localUserUserName" value="<%= localUser.UserName %>"/>
+<input type="hidden" name="localUserFullName" value="<%= localUser.FullName %>"/>
+<input type="hidden" name="localUserPassword" value="<%= localUser.Password %>"/>
+<script>
+        var localUserID = <%= localUser._id %>            
+        var localUserUserName = <%= localUser.UserName %>            
+        var localUserFullName = <%= localUser.FullName %>            
+        var localUserPassword = <%= localUser.Password %>            
+</script>
+<% } %>

@@ -4,7 +4,9 @@ var db = config.db;
 
 // create an schema
 var quizSchema = new mongoose.Schema({
-    QuizTitle: String
+    QuizTitle: String,
+    QuestionIDs: Array,
+    UserScores: Array
 });
 
 QuizTable = mongoose.model('Quiz', quizSchema);

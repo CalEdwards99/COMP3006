@@ -7,4 +7,7 @@ var router = express.Router();
 //navigate to the create quiz section
 router.post('/form', quizController.NavCreateQuiz);
 
+//creates a new quiz
+router.post('/create', quizController.createQuiz)
+
 module.exports = router;

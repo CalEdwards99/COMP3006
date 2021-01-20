@@ -1,26 +1,21 @@
 var quizGroupModel = require('../models/quiz-model');
 
-//Private functions
-
-
-
-//End Private functions
-
 
 module.exports = {
 
     //TODO:CE Populate quiz group page
     NavCreateQuiz: function (req, res) {
-        res.render('pages/quiz');
+        console.log("navigating to quiz create page")
+        res.render('pages/createquiz');
     },
 
-    createQuizGroup: function (req, res) {
+    createQuiz: function (req, res) {
 
         var quizGroup = req.body;
 
         quizGroupModel.createQuizGroup(quizGroup, function (returningData) {
 
-            var message = "Quiz Group: " + returningData.GroupName + " saved to database";
+            var message = "Quiz: " + returningData.GroupName + " saved to database";
             let pageData = { quiz: returningData, message: message };
 
             res.render("pages/CreateQuiz", pageData)
@@ -31,10 +26,7 @@ module.exports = {
 
     //Bespoke functions 
     insertUserToQuizGroup: function (req, res) {
-        //const editId = req.params.id;
-        //const editData = quizGroupModel.insertUserToQuizGroup(editId);
-        //res.render('/pages/QuizDashboard', { editData: editData, editId: editId });
-        //res.render('/pages/QuizDashboard', { editData: editData, editId: editId });
+       
     },
 
 

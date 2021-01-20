@@ -13,6 +13,11 @@
     </form>
 
     <form name="form1" method="GET" action="/quizgroup/joinquizgroup">
+    <%- include ('../partials/userInfo') %>
+    <% if(typeof localUser!= 'undefined') { %>
+<input type="hidden" name="localUserID" value="<%= localUser._id %>"/>
+<% } %>
+
     <input type="submit" value="Join Quiz Group">
     </form>
 

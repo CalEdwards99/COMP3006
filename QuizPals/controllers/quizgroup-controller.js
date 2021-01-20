@@ -1,4 +1,5 @@
 var quizGroupModel = require('../models/quizgroup-model');
+var userController = require('../controllers/users-controller');
 
 //Private functions
 
@@ -35,6 +36,9 @@ module.exports = {
 
     listAllQuizGroup: function (req, res) {
 
+        //var localUser = userController.returnedQuizGroupUser()
+       console.log(req.body)
+
         quizGroupModel.ListAllQuizGroups(function (returningData) {
 
             let GroupName = "";
@@ -61,13 +65,18 @@ module.exports = {
 
     //Bespoke functions 
     insertUserToQuizGroup: function (req, res) {
-        //const editId = req.params.id;
-        //const editData = quizGroupModel.insertUserToQuizGroup(editId);
-        //res.render('/pages/QuizDashboard', { editData: editData, editId: editId });
-        //res.render('/pages/QuizDashboard', { editData: editData, editId: editId });
+        var quizGroup = req.body;
+
+        quizGroupModel.insertUserToQuizGroup(quizGroup, function (returnedQuizGroupUser) {
+
+            console.log(returnedQuizGroupUser)
+
+        });
     },
 
     loginQuizGroup: function (req, res) {
+
+        var localUser = userController.findUser
 
         var quizGroup = req.body;
 
@@ -105,7 +114,6 @@ module.exports = {
             console.log("Login Successful");
         })
 
-        //res.render('/pages/QuizDashboard', { editData: editData, editId: editId });
     },
     
 
