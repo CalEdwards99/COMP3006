@@ -1,6 +1,6 @@
 var userModel = require('../models/users-model');
 var passport = require('../config/passport');
-const bcrypt = require('bcrypt');
+var passwordHelper = require('../helper/password')
 
 const localUser = {
     _id: String,
@@ -8,22 +8,6 @@ const localUser = {
     UserName: String,
     Password: String
 }
-
-
-function convertReturnedUserToLocal(returnedUser) {
-
-    //Private functions
-
-    for (let i in returnedUser) {
-        if (returnedUser[i]._id != null)  { localUser._id = returnedUser[i]._id }
-        if (returnedUser[i].FullName != null) { localUser.FullName = returnedUser[i].FullName }
-        if (returnedUser[i].UserName != null) { localUser.UserName = returnedUser[i].UserName }
-        if (returnedUser[i].Password != null) { localUser.Password = returnedUser[i].Password }
-    }
-    return localUser
-};
-
-
 
 //End Private functions
 
@@ -59,11 +43,13 @@ module.exports = {
             Password: password
         }
 
-        userModel.CheckUserExists(user, function (userCount) {
-            if (userCount !== 1) {
-                errors.push({ msg: "User not found / password incorrect" })
-            }
-        }) 
+        
+
+        //userModel.CheckUserExists(user, function (userCount) {
+        //    if (userCount !== 1) {
+        //        errors.push({ msg: "User not found / password incorrect" })
+        //    }
+        //}) 
 
         if (errors.length > 0) {
             res.render('pages/login', {
@@ -128,26 +114,21 @@ module.exports = {
                     user: user
                 })
             } else { // no errors so create a new user
-       
-                //hash password
-                bcrypt.genSalt(10, (err, salt) =>
-                bcrypt.hash(user.Password, salt,
-                    (err, hash) => {
-                        if (err) throw err;
-                        //save pass to hash
-                        user.Password = hash;
 
-                        //save user
-                        userModel.createUser(user, function (returningData) {
-                            errors.push({ msg: "New User: " + returningData.UserName + " saved to database" });
-                            req.flash('success_msg', 'You have now registered!')
-                            let pageData = { user: returningData, errors: errors };
-                            res.render("pages/signup", pageData)
-                            console.log("New User Added");
-                        });
+                passwordHelper.generatePassword(user.Password, function (returnedPassword) {
+                    user.Password = returnedPassword
 
+                    //save user
+                    userModel.createUser(user, function (returningData) {
+                        errors.push({ msg: "New User: " + returningData.UserName + " saved to database" });
+                        req.flash('success_msg', 'You have now registered!')
+                        let pageData = { user: returningData, errors: errors };
+                        res.render("pages/signup", pageData)
+                        console.log("New User Added");
+                    });
 
-                    }));
+                })
+                
             } //ELSE statement ends here
     },
 

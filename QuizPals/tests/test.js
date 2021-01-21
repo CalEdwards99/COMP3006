@@ -5,6 +5,9 @@ const fetch = require("node-fetch");
 //config files
 var config = require("../config/config");
 
+//helper files
+var passwordHelper = require("../helper/password");
+
 //models
 const usersModel = require("../models/users-model");
 const quizgroupModel = require("../models/quizgroup-model");
@@ -129,20 +132,49 @@ describe("Users", function () {
 
 });
 
+//------------------------------ QUIZ GROUP TESTS ------------------------------//
 
-//test('testing the connection to the database', () => {
-//    // Connect to the Mongo database using Mongoose.
-//    var db = config.db
 
-//    db.on('error', function () {
-//        //connection to mongodb failed
-//        expect(0).toBe(1);
-//    });
+//------------------------------ HELPER TESTS ------------------------------//
 
-//    db.once('open', function () {
-//        //conection to mongodb successful
-//        expect(1).toBe(1);
-//    });
-//});
+describe("Helpers", function () {
+    describe("Password", function () {
+        it("Generating a password", (done) => {
+            var plainTextpassword = "TestPassword"
+
+            passwordHelper.generatePassword(plainTextpassword, function (returnedPassword) {
+
+                console.log("Password generated :" + returnedPassword)
+
+                if (plainTextpassword != returnedPassword) {
+                    expect(true).equal(true);
+                    done();
+                } else {
+                    expect(true).equal(false);
+                    done;
+                }
+            }) 
+
+        });
+
+        it("Testing password comparison function", (done) => {
+            var plainTextpassword = "TestPassword"
+            var encryptedPassword = "$2b$10$C/We981MFwDe1hwrC9ta9eoHhEnWxE4EtpfpGA9rTzHKr11ylX826" //encrypted plaintext
+
+            passwordHelper.comparePasswords(plainTextpassword, encryptedPassword, function (result) {
+                expect(result).equal(true);
+                done();
+            })
+
+        });
+
+    });
+});
+
+
+
+
+
+
 
 

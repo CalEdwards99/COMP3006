@@ -9,8 +9,7 @@ var quizQuestionSchema = new mongoose.Schema({
     B: String,
     C: String,
     D: String,
-    CorrectAnswer: String
-    
+    CorrectAnswer: String  
 });
 
 QuizQuestionTable = mongoose.model('QuizQuestion', quizQuestionSchema);
