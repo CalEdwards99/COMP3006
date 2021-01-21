@@ -4,7 +4,14 @@ const userController = require('../controllers/users-controller');
 const router = express.Router();
 
 //register page
-router.get('/login', userController.signInNavigation)
+router.post('/login', (req, res, next) => {
+    passport.authenticate('local', {
+        successRedirect: '/dashboard',
+        failureRedirect: '/users/login',
+        failureFlash: true,
+    })(req, res, next);
+})
+
 //{
     //console.log("login through index")
     //res.render('pages/dashboard');

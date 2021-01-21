@@ -2,14 +2,13 @@ var userModel = require('../models/users-model');
 var passport = require('../config/passport');
 var passwordHelper = require('../helper/password')
 
+//public controller properties
 const localUser = {
     _id: String,
     FullName: String,
     UserName: String,
     Password: String
 }
-
-//End Private functions
 
 
 module.exports = {
@@ -148,6 +147,8 @@ module.exports = {
     insertUserToQuizGroup: function (req, res) {
 
     },
+
+    //exporting properties and access methods
 
     convertReturnedUserToLocal: function (returnedUser) {
 

@@ -16,7 +16,9 @@ QuizQuestionTable = mongoose.model('QuizQuestion', quizQuestionSchema);
 
 module.exports = {
 
-    QuizQuestionTable,
+    quizQuestionSchema,
+
+    //QuizQuestionTable,
 
     //"REGION" CRUD operations
 

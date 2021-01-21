@@ -1,7 +1,44 @@
 var quizGroupModel = require('../models/quizgroup-model');
 var userController = require('../controllers/users-controller');
+const { ObjectID } = require('mongodb');
 
-//Private functions
+//public controller properties
+const quizScore = {
+    UserName: String,
+    Score: Number
+};
+
+var quizQuestion = {
+    Question: String,
+    A: String,
+    B: String,
+    C: String,
+    D: String,
+    CorrectAnswer: String
+};
+
+var quiz = {
+    QuizTitle: String,
+    QuizCreator: String,
+    Questions: [quizQuestion],
+    UserScores: [quizScore]
+};
+
+
+const quizGroupUser = {
+    _id: ObjectID,
+    FullName: String,
+    UserName: String,
+};
+
+const quizGroup = {
+    //_id: ObjectID,
+    GroupName: String,
+    Password: String,
+    GroupMembers: [quizGroupUser],
+    Quizzes: [quiz]
+};
+
 
 
 
@@ -96,7 +133,6 @@ module.exports = {
 
     },
 
-    //Bespoke functions 
     dashboardQuizGroup: function (req, res) {
         var quizGroup = req.body;
 
@@ -116,7 +152,34 @@ module.exports = {
 
     },
     
+    //exporting properties and access methods
 
+    convertQuizGroupToLocal: function (returnedQuizGroup) {
+
+        for (let i in returnedQuizGroup) {
+            if (returnedQuizGroup[i]._id != null) { quizGroup._id = returnedQuizGroup[i]._id}
+            if (returnedQuizGroup[i].GroupName != null) { quizGroup.GroupName = returnedQuizGroup[i].GroupName}
+            if (returnedQuizGroup[i].Password != null) { quizGroup.Password = returnedQuizGroup[i].Password }
+            if (returnedQuizGroup[i].GroupMembers != null) { quizGroup.GroupMembers = returnedQuizGroup[i].GroupMembers }
+        }
+        return quizGroup
+
+    },
+
+    quizGroup,
+
+    convertQuizGroupUserToLocal: function (returnedQuizGroupUser) {
+
+        for (let i in returnedQuizGroupUser) {
+            if (returnedQuizGroupUser[i]._id != null) { quizGroupUser._id = returnedQuizGroupUser[i]._id }
+            if (returnedQuizGroupUser[i].FullName != null) { quizGroupUser.FullName = returnedQuizGroupUser[i].FullName }
+            if (returnedQuizGroupUser[i].UserName != null) { quizGroupUser.UserName = returnedQuizGroupUser[i].UserName }
+        }
+        return quizGroupUser
+
+    },
+
+    quizGroupUser,
     
 
 }

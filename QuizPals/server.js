@@ -68,8 +68,6 @@ app.use(express.static('./public'));
 //this line is required to parse the request body
 app.use(express.json())
 
-app.use(passport.initialize());
-app.use(passport.session());
 //current User
 //app.use(function (req, res, next) {
 //    res.locals.currentUser = req.user;

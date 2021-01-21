@@ -1,47 +1,64 @@
 var config = require("../config/config");
 var usersModel = require("../models/users-model") //TODO: user model as embedded document
 var mongoose = require('mongoose');
+const { ObjectID } = require("mongodb");
+const { quizGroup } = require("../controllers/quizgroup-controller");
+const quizModel = require("./quiz-model");
 var db = config.db;
 
-// create an schema
+var quizScore = new mongoose.Schema({
+    _id: String,
+    UserName: String,
+    Score: String
+});
+
+var quizQuestion = new mongoose.Schema({
+    Question: String,
+    A: String,
+    B: String,
+    C: String,
+    D: String,
+    CorrectAnswer: String
+});
+
+var quiz = new mongoose.Schema({
+    QuizTitle: String,
+    QuizCreator: String,
+    Questions: [quizQuestion],
+    UserScores: [quizScore]
+});
+
 var quizGroupUser = new mongoose.Schema({
-    quizGroupUserID: String,
+    _id: ObjectID,
     FullName: String,
     UserName: String,
 });
 
 var quizGroupSchema = new mongoose.Schema({
+    //_id: mongoose.Schema.Types.ObjectId,
     GroupName: String,
     Password: String,
-    GroupMembers: [quizGroupUser]
+    GroupMembers: [quizGroupUser],
+    Quizzes: [quiz]
 });
 
-QuizGroupTable = mongoose.model('QuizGroup', quizGroupSchema);
+const QuizGroupTable = mongoose.model('QuizGroup', quizGroupSchema);
 
 module.exports = {
 
-
-    // retrieve my model
-    //var BlogPost = mongoose.model('BlogPost');
-
-    // create a blog post
-    //var post = new BlogPost();
-
-    // create a comment
-    //post.comments.push({ title: 'My comment' });
-
-    //post.save(function (err) {
-    //    if (!err) console.log('Success!');
-    //});
+    QuizGroupTable,
 
     //"REGION" CRUD operations
 
     createQuizGroup: function (quizgroup, callback) {
 
+        //QuizGroupTable.init();
+
         quizgroup = new QuizGroupTable(quizgroup);
         quizgroup.save(function (err, quizgroup) {
             if (err) throw err;
-            return callback(quizgroup);
+
+            return callback(quizgroup.toObject());
         })
 
     },
@@ -59,38 +76,48 @@ module.exports = {
         var quizGroups = QuizGroupTable.find(query);
         quizGroups.exec(function (err, data) {
             if (err) throw err;
-
-            //var quizGroup = {quizGroup: data}
-
-            //console.log(quizGroup)
-            console.log(data);
-            return callback(data);
-            
+            return callback(data);        
         })
 
     },
 
-    readQuizGroup: function () {
-
-        data = "Form data was read";
-        return data;
+    updateQuizGroup: function (quizGroupID, quizGroup, callback) {
+        QuizGroupTable.findByIdAndUpdate(quizGroupID, quizGroup, function(err, updatedQuizGroup) {
+            if(err) {
+                console.log(err)
+            }
+            else {
+                return callback(updatedQuizGroup.toObject())
+            }
+        });
+       
     },
 
-    updateQuizGroup: function () {
-
-        data = "Form data was updated";
-        return data;
-    },
-
-    deleteQuizGroup: function () {
-
-        data = "Form data was deleted";
-        return data;
+    deleteQuizGroup: function (quizGroupID, callback) {
+        QuizGroupTable.findByIdAndDelete(quizGroupID, function (err, deletedQuizGroup) {
+            if (err) {
+                console.log(err)
+            }
+            else {
+                console.log("Deleted Quiz Group: ", deletedQuizGroup);
+                return callback(deletedQuizGroup)
+            }
+        });
     },
 
     //"END REGION"
 
     //"REGION" Bespoke function
+
+    QuizGroupCount: function (query, callback) {
+        var quizGroupCount = QuizGroupTable.find(query).countDocuments();
+        quizGroupCount.exec(function (err, data) {
+            if (err) throw err;
+            return callback(data);
+        })
+
+    },
+
     insertUserToQuizGroup: function (quizgroup, callback) {
 
         quizgroup = new QuizGroupTable(quizgroup);

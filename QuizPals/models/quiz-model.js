@@ -1,17 +1,43 @@
 var config = require("../config/config");
+var quizScoreModel = require("./quizscore-model")
+var quizQuestionModel = require("./quizquestion-model")
 var mongoose = require('mongoose');
 var db = config.db;
 
-// create an schema
-var quizSchema = new mongoose.Schema({
-    QuizTitle: String,
-    QuestionIDs: Array,
-    UserScores: Array
+var quizScore = new mongoose.Schema({
+    _id: String,
+    UserName: String,
+    Score: String
 });
 
-QuizTable = mongoose.model('Quiz', quizSchema);
+var quizQuestion = new mongoose.Schema({
+    Question: String,
+    A: String,
+    B: String,
+    C: String,
+    D: String,
+    CorrectAnswer: String
+});
+
+var quiz = new mongoose.Schema({
+    QuizTitle: String,
+    QuizCreator: String,
+    Questions: [quizQuestion],
+    UserScores: [quizScore]
+});
+
+//var quizSchema = new mongoose.Schema({
+//    QuizTitle: String,
+//    QuizCreator: String,
+//    Questions: [quizQuestionModel.quizQuestionSchema],
+//    UserScores: [quizScoreModel.quizScoreSchema]
+//});
+
+//QuizTable = mongoose.model('Quiz', quizSchema);
 
 module.exports = {
+
+    //quizSchema,
 
     //"REGION" CRUD operations
 
