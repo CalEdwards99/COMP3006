@@ -51,7 +51,7 @@ describe("Database", function () {
 
 describe("Users", function () {
     describe("Testing all user related functions", function () {
-
+        this.timeout(30000)
         var newUser = {
             FullName: "Test Person",
             UserName: "TestAccount",
@@ -86,30 +86,43 @@ describe("Users", function () {
         it("Updating test user ", (done) => {
 
             usersModel.FindUser(newUser, function (returningData) {
-                var localUser = usersController.convertReturnedUserToLocal(returningData)
 
-                var localUserFullName = localUser.FullName
+                var localUser = usersController.convertReturnedUserToLocal(returningData)
                 localUser.FullName = "resU tseT"
 
-                usersModel.updateUser(localUser, function (updatedUser) {
-                    var localUpdatedUser = usersController.convertReturnedUserToLocal(updatedUser)
-                    expect(localUpdatedUser.FullName).not(localUserFullName)
-                    done();
+                usersModel.updateUser(localUser._id, localUser, function (updatedUser) {
+
+                    usersModel.FindUser(updatedUser, function (returnedUpdatedUser) {
+                        var returnedUser = usersController.convertReturnedUserToLocal(returnedUpdatedUser)
+                        expect(returnedUser.FullName).equal(localUser.FullName)
+                        done();
+                    });  
                 });         
 
             });
 
         });
 
-        it("Deleting test user ", function () {
-            usersModel.deleteUser({ UserName: newUser.UserName }, function (callback) {
+        it("Deleting test user ", (done) => {
 
-                callback
+            var query = {UserName: newUser.UserName }
 
-                usersModel.CheckUserExists({ UserName: newUser.UserName }, function (usercount) {
-                    expect(usercount).equal(0)
-                });
-            })
+            usersModel.FindUser(query, function (returningData) {
+                var localUser = usersController.convertReturnedUserToLocal(returningData);
+
+                var userID = localUser._id;
+
+                usersModel.deleteUser(userID, function (callback) {
+
+                    usersModel.CheckUserExists(query, function (usercount) {
+                        console.log("User should have been deleted from the database");
+                        expect(usercount).equal(0);
+                        done();
+                    });
+                })
+            });
+
+            
         });
 
     });

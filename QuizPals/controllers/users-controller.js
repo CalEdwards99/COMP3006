@@ -2,23 +2,23 @@ var userModel = require('../models/users-model');
 var passport = require('../config/passport');
 const bcrypt = require('bcrypt');
 
+const localUser = {
+    _id: String,
+    FullName: String,
+    UserName: String,
+    Password: String
+}
+
 
 function convertReturnedUserToLocal(returnedUser) {
 
     //Private functions
-    var localUser = {
-        _id: String,
-        FullName: String,
-        UserName: String,
-        Password: String
-    }
 
     for (let i in returnedUser) {
-        localUser._id = returnedUser[i]._id
-        localUser.FullName = returnedUser[i].FullName
-        localUser.UserName = returnedUser[i].UserName
-        localUser.Password = returnedUser[i].Password
-        console.log(localUser)
+        if (returnedUser[i]._id != null)  { localUser._id = returnedUser[i]._id }
+        if (returnedUser[i].FullName != null) { localUser.FullName = returnedUser[i].FullName }
+        if (returnedUser[i].UserName != null) { localUser.UserName = returnedUser[i].UserName }
+        if (returnedUser[i].Password != null) { localUser.Password = returnedUser[i].Password }
     }
     return localUser
 };
@@ -168,24 +168,18 @@ module.exports = {
 
     },
 
-    convertReturnedUserToLocal : function (returnedUser) {
+    convertReturnedUserToLocal: function (returnedUser) {
 
-    //Private functions
-    var localUser = {
-        _id: String,
-        FullName: String,
-        UserName: String,
-        Password: String
-    }
+        for (let i in returnedUser) {
+            if (returnedUser[i]._id != null) { localUser._id = returnedUser[i]._id }
+            if (returnedUser[i].FullName != null) { localUser.FullName = returnedUser[i].FullName }
+            if (returnedUser[i].UserName != null) { localUser.UserName = returnedUser[i].UserName }
+            if (returnedUser[i].Password != null) { localUser.Password = returnedUser[i].Password }
+        }
+        return localUser
 
-    for (let i in returnedUser) {
-        localUser._id = returnedUser[i]._id
-        localUser.FullName = returnedUser[i].FullName
-        localUser.UserName = returnedUser[i].UserName
-        localUser.Password = returnedUser[i].Password
-        console.log(localUser)
-    }
-    return localUser
-}
+    },
+
+    localUser
 
 }

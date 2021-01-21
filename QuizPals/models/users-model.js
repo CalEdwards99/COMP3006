@@ -1,9 +1,11 @@
 var config = require("../config/config");
 var mongoose = require('mongoose');
 const passportLocalMongoose = require("passport-local-mongoose");
+const usersController = require("../controllers/users-controller");
 
 const { ObjectID } = require("mongodb");
 const { user } = require("../app/models/user");
+
 var db = config.db;
 
 // create an schema
@@ -15,7 +17,7 @@ const userSchema = new mongoose.Schema({
 
 //userSchema.plugin(passportLocalMongoose, { usernameField: 'UserName' });
 
-userTable = mongoose.model('User', userSchema);
+const userTable = mongoose.model('User', userSchema);
 //var User : mongoose.model<any> = mongoose.model('User', userSchema);
 
 module.exports = {
@@ -70,35 +72,31 @@ module.exports = {
         return data;
     },
 
-    updateUser: function (user, callback) {
+    updateUser: function (userID ,user, callback) {
 
-        newUser = new userTable(user);
-        newUser.save(function (err, user) {
-            if (err) throw err;
-            console.log("New User Created in User Model")
-            return callback(user);
-        })
-
+        userTable.findByIdAndUpdate(userID, user, function (err, updatedUser) {
+            if (err) {
+                console.log(err)
+            }
+            else {
+                console.log("Updated User : ", updatedUser);            
+                return callback(updatedUser)
+            }
+        });
     },
 
-    deleteUser: function (deleteUser, callback) {
-        user = new userTable(deleteUser);
+    deleteUser: function (userID, callback) {
 
-        user.deleteOne(function (err) {
-        //        if (err) throw err;
-        //        console.log("User Deleted in User Model")
-        //        return callback(user);
-        })
+        userTable.findByIdAndDelete(userID, function (err, deletedUser) {
+            if (err) {
+                console.log(err)
+            }
+            else {
+                console.log("Deleted User: ", deletedUser);
+                return callback(deletedUser)
+            }
+        });
     }
-
-    //   deleteData: function (deleteId, callback) {
-
-    //    userData = userTable.findByIdAndDelete(deleteId);
-    //    userData.exec(function (err, data) {
-    //        if (err) throw err;
-    //        return callback(data);
-    //    })
-    //}
 
     //"END REGION"
 
