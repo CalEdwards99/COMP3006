@@ -155,6 +155,7 @@ describe("QuizGroups", function () {
                 };
 
                 var quizQuestion = {
+                    QuestionNumber: String,
                     Question: String,
                     A: String,
                     B: String,
@@ -195,10 +196,7 @@ describe("QuizGroups", function () {
                         quizGroupID = localQuiz._id
                         expect(quizGroupID).equal(localQuiz._id)
                         done();
-
                     }
-
-
                 })
 
             });
@@ -218,9 +216,7 @@ describe("QuizGroups", function () {
                 console.log(localQuiz)
                 expect(localQuiz.GroupName).equal(quizGroup.GroupName)
                 done();
-
             });
-
         });
 
         it("Updated the Quiz Group", (done) => {
@@ -241,11 +237,8 @@ describe("QuizGroups", function () {
                         done();
 
                     })
-
                 })
-
             });
-
         });
 
         it("Added a Quiz to the Quiz Group", (done) => {
@@ -263,6 +256,7 @@ describe("QuizGroups", function () {
                     };
 
                     var quizQuestion = {
+                        QuestionNumber: "1",
                         Question: "What is the capital of France?",
                         A: "London",
                         B: "Berlin",
@@ -278,22 +272,40 @@ describe("QuizGroups", function () {
                         UserScores: [quizScore]
                     };
 
-
                     localQuiz.Quizzes.push(quiz)
-
-                    
 
                     console.log(localQuiz.Quizzes)
 
                     quizgroupModel.updateQuizGroup(quizGroupID, localQuiz, function (QuizGroup) {
 
                         quizgroupModel.FindQuizGroup(query, function (returnedQuizGroup) {
-                            var updatedQuiz = quizgroupController.convertQuizGroupToLocal(returnedQuizGroup)
+                            var updatedQuizGroup = quizgroupController.convertQuizGroupToLocal(returnedQuizGroup)
 
-                            console.log(updatedQuiz)
+                            quizGroupQuizNames = []
 
-                            //console.log("expected the updated quizgroup name to be : " + localQuiz.GroupName + " and got : " + updatedQuiz.GroupName)
-                            //expect(updatedQuiz.GroupName).equal(localQuiz.GroupName)
+                            for (let i in updatedQuizGroup.Quizzes) {
+
+                                var updatedQuizGroupQuizzes = quizgroupController.convertQuizGroupQuizToLocal(updatedQuizGroup.Quizzes)
+
+                                console.log("quiz id : " + updatedQuizGroupQuizzes._id)
+
+                                updatedQuizGroupQuizzes.QuizTitle
+
+                                quizGroupQuizNames.push(updatedQuizGroupQuizzes.QuizTitle)
+                            }
+
+                            var testQuizName = ""
+
+                            function checkQuizNames(quizName) {
+                                if (quizName == "Capital Cities Quiz") {
+                                    return quizName
+                                }
+                            }
+
+                            testQuizName = quizGroupQuizNames.find(checkQuizNames)
+
+                            expect(testQuizName).equal("Capital Cities Quiz")
+
                             done();
 
                         })
@@ -306,21 +318,140 @@ describe("QuizGroups", function () {
 
         });
 
+        it("Find a Quiz inside a Quiz Group", (done) => {
+            this.timeout(20000)
+            var query = { _id: quizGroupID }
+
+            quizgroupModel.FindQuizGroup(query, function (returnedQuizGroup) {
+
+                var localQuiz = quizController.getQuizFromQuizGroup("Capital Cities Quiz", returnedQuizGroup)
+
+                console.log(localQuiz)
+                done();
+            });
+        });
+
+        it("Update a Quiz inside a Quiz Group", (done) => {
+            this.timeout(20000)
+            var query = { _id: quizGroupID }
+
+            quizgroupModel.FindQuizGroup(query, function (returnedQuizGroup) {
+
+                var localQuiz = quizController.getQuizFromQuizGroup("Capital Cities Quiz", returnedQuizGroup)
+
+                localQuiz.QuizTitle = "Cities Quiz"
+
+                quizgroupModel.updateQuizGroup(quizGroupID, localQuiz, function (callback) {
+                var localQuiz = quizController.getQuizFromQuizGroup("Cities Quiz", callback)
 
 
-        //it("Deleting the test group", (done) => {
+                    console.log(localQuiz)
+                    expect(localQuiz.QuizTitle).equal("Cities Quiz")
+                    done();
+                });
+            });
 
-        //    quizgroupModel.deleteQuizGroup(quizGroupID, function (QuizGroup) {
+        });
 
-        //        quizgroupModel.QuizGroupCount(QuizGroup, function (quizGroupCount) {
+        it("Remove a Quiz from inside a Quiz Group", (done) => {
+            this.timeout(20000)
+            var query = { _id: quizGroupID }
 
-        //            expect(quizGroupCount).equal(0)
-        //            done();
+            quizgroupModel.FindQuizGroup(query, function (returnedQuizGroup) {
+                var localQuiz = quizgroupController.convertQuizGroupToLocal(returnedQuizGroup)
 
-        //        })
+                console.log(localQuiz.Quizzes.length)
 
-        //    })
-        //});
+                console.log(localQuiz.Quizzes)
+
+                localQuiz.Quizzes.splice(1,1)
+
+                quizgroupModel.updateQuizGroup(quizGroupID ,localQuiz, function (callback) {
+                    var updatedQuiz = quizgroupController.convertQuizGroupToLocal(callback)
+
+                    expect(updatedQuiz.Quizzes.length).equal(1);
+                    done();
+                })
+             
+            });
+
+        });
+
+        it("Update a User Score inside a Quiz inside a Quiz Group", (done) => {
+            this.timeout(20000)
+            var query = { _id: quizGroupID }
+
+            quizgroupModel.FindQuizGroup(query, function (returnedQuizGroup) {
+                var LocalQuizGroup = quizgroupController.convertQuizGroupToLocal(returnedQuizGroup)
+                var localQuiz = quizController.getQuizFromQuizGroup("Cities Quiz", returnedQuizGroup)
+
+                localQuiz.UserScores.push({
+                    userID: quizGroupUserID,
+                    UserName: "Andy",
+                    Score: "5"
+                })
+
+                LocalQuizGroup.Quizzes.push(localQuiz.UserScores)
+
+                LocalQuizGroup.Quizzes.splice(-1,1)//for some reason have to splice last quiz as it creates empty duplicates otherwise?
+                
+
+                quizgroupModel.updateQuizGroup(quizGroupID, LocalQuizGroup, function (callback) {
+                    var updatedQuiz = quizController.getQuizFromQuizGroup("Cities Quiz", callback)
+
+                    expect(updatedQuiz.UserScores.length)
+
+                    done();
+                });
+            });
+
+        });
+
+        it("Insert a Question inside a Quiz inside a Quiz Group", (done) => {
+            this.timeout(20000)
+            var query = { _id: quizGroupID }
+
+            quizgroupModel.FindQuizGroup(query, function (returnedQuizGroup) {
+                var LocalQuizGroup = quizgroupController.convertQuizGroupToLocal(returnedQuizGroup)
+                var localQuiz = quizController.getQuizFromQuizGroup("Cities Quiz", returnedQuizGroup)
+
+                
+
+                var quizQuestion = {
+                    QuestionNumber: "2",
+                    Question: "What is the capital of Russia?",
+                    A: "Vladivostock",
+                    B: "St Petersburg",
+                    C: "Moscow",
+                    D: "Kursk",
+                    CorrectAnswer: "C"
+                };
+
+                localQuiz.Questions.push(quizQuestion)
+                LocalQuizGroup.Quizzes.push(localQuiz.Questions)
+                LocalQuizGroup.Quizzes.splice(-1, 1)
+                console.log(LocalQuizGroup)
+
+                quizgroupModel.updateQuizGroup(quizGroupID, LocalQuizGroup, function (callback) {
+                    var localQuiz = quizController.getQuizFromQuizGroup("Cities Quiz", callback)
+                    expect(localQuiz.Questions.length).equal(2)
+                    done();
+                });
+            });
+
+        });
+
+        it("Deleting the test group", (done) => {
+
+            quizgroupModel.deleteQuizGroup(quizGroupID, function (QuizGroup) {
+
+                quizgroupModel.QuizGroupCount(QuizGroup, function (quizGroupCount) {
+                    expect(quizGroupCount).equal(0)
+                    done();
+                })
+
+            })
+        });
 
     });
 })

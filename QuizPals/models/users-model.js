@@ -1,12 +1,5 @@
 var config = require("../config/config");
 var mongoose = require('mongoose');
-const passportLocalMongoose = require("passport-local-mongoose");
-const usersController = require("../controllers/users-controller");
-
-const { ObjectID } = require("mongodb");
-const { user } = require("../app/models/user");
-
-var db = config.db;
 
 // create an schema
 const userSchema = new mongoose.Schema({
@@ -15,10 +8,7 @@ const userSchema = new mongoose.Schema({
     Password: String
 });
 
-//userSchema.plugin(passportLocalMongoose, { usernameField: 'UserName' });
-
 const userTable = mongoose.model('User', userSchema);
-//var User : mongoose.model<any> = mongoose.model('User', userSchema);
 
 module.exports = {
 

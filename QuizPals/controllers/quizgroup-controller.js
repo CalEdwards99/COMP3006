@@ -1,5 +1,6 @@
 var quizGroupModel = require('../models/quizgroup-model');
-var userController = require('../controllers/users-controller');
+//var userController = require('../controllers/users-controller');
+var mongoose = require('mongoose');
 const { ObjectID } = require('mongodb');
 
 //public controller properties
@@ -18,6 +19,7 @@ var quizQuestion = {
 };
 
 var quiz = {
+    //_id: ObjectId,
     QuizTitle: String,
     QuizCreator: String,
     Questions: [quizQuestion],
@@ -55,6 +57,20 @@ module.exports = {
         let pageData = { quiz: noData, message: message };
 
         res.render('pages/CreateQuizGroup', pageData);
+    },
+
+    createQuiz: function (req, res) {
+
+        var quizGroup = req.body;
+
+        quizGroupModel.createQuizGroup(quizGroup, function (returningData) {
+
+            var message = "Quiz: " + returningData.GroupName + " saved to database";
+            let pageData = { quiz: returningData, message: message };
+
+            res.render("pages/CreateQuiz", pageData)
+            console.log("New QuizGroup Added");
+        });
     },
 
     createQuizGroup: function (req, res) {
@@ -113,7 +129,7 @@ module.exports = {
 
     loginQuizGroup: function (req, res) {
 
-        var localUser = userController.findUser
+        //var localUser = userController.findUser
 
         var quizGroup = req.body;
 
@@ -180,6 +196,38 @@ module.exports = {
     },
 
     quizGroupUser,
-    
+
+    convertQuizGroupQuizToLocal: function (returnedQuizGroupQuiz) {
+
+        for (let i in returnedQuizGroupQuiz) {
+            //console.log("quiz group ID: " + returnedQuizGroupQuiz[i]._id)
+            if (returnedQuizGroupQuiz[i]._id != null) { quiz.__id = returnedQuizGroupQuiz[i]._id }
+            if (returnedQuizGroupQuiz[i].QuizCreator != null) { quiz.QuizCreator = returnedQuizGroupQuiz[i].QuizCreator }
+            if (returnedQuizGroupQuiz[i].QuizTitle != null) { quiz.QuizTitle = returnedQuizGroupQuiz[i].QuizTitle }
+            if (returnedQuizGroupQuiz[i].Questions != null) { quiz.Questions = returnedQuizGroupQuiz[i].Questions }
+            if (returnedQuizGroupQuiz[i].UserScores != null) { quiz.UserScores = returnedQuizGroupQuiz[i].UserScores }
+        }
+
+        return quiz
+
+    },
+
+    quiz,
+
+    convertQuizUserScoreToLocal: function (returnedQuizUserScore) {
+
+        for (let i in returnedQuizGroupQuiz) {
+            if (returnedQuizUserScore[i]._id != null) { quizScore.__id = returnedQuizUserScore[i]._id }
+            if (returnedQuizUserScore[i].UserName != null) { quizScore.UserName = returnedQuizUserScore[i].UserName }
+            if (returnedQuizUserScore[i].UserName != null) { quizScore.Score = returnedQuizUserScore[i].UserName }
+        }
+
+        return quizScore
+
+    },
+
+    quizScore
+
+
 
 }

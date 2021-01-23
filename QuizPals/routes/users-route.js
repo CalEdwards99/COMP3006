@@ -2,14 +2,16 @@
 var express = require('express');
 const userController = require('../controllers/users-controller');
 const passport = require("passport");
-require("../config/passport")(passport);
 var router = express.Router();
+const { ensureAuthenticated } = require('../config/auth') 
 
 //navigates to the landing page
 router.get('/signup', userController.signUpNavigation);
 
 // sign in route
-//router.post('/login', userController.signInNavigation);
+router.get('/login', ensureAuthenticated, userController.UserDashboard);
+
+
 
 // creates a user route
 router.post('/create', userController.createUser);
@@ -20,27 +22,21 @@ router.post('/create', userController.createUser);
 //// display data route
 //router.get('/joinquizgroup', quizGroupController.listAllQuizGroup);
 
-////router.post('/login:id', quizGroupController.loginQuizGroup);
-//router.post('/login', userController.signInNavigation);
-
 //Login mechanism, authorises passport
-//router.post('/login', passport.authenticate('local', {
-//    failureRedirect: '/login',
-//    failureFlash: true
-//}),
-//    function (req, res) {
-//        //req.flash('success_message', 'You are now Logged in!!');
-//        res.redirect('/pages/dashboard');
-//    }
-//);
-
 router.post('/login', (req, res, next) => {
-    passport.authenticate('local', {
-        successRedirect: '/dashboard',
-        failureRedirect: '/users/login',
+    console.log("Authenticating with passport")
+    passport.authenticate('local', {      
+        successRedirect: '/user/login',
+        failureRedirect: '/',
         failureFlash: true,
     })(req, res, next);
 })
+
+router.get('/logout', (req, res) => {
+    req.logout();
+    req.flash('success_msg', 'Now logged out');
+    res.redirect('/');
+});
 
 
 module.exports = router;

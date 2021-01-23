@@ -11,6 +11,18 @@ const localUser = {
 }
 
 
+function convertReturnedUserToLocal (returnedUser) {
+
+    for (let i in returnedUser) {
+        if (returnedUser[i]._id != null) { localUser._id = returnedUser[i]._id }
+        if (returnedUser[i].FullName != null) { localUser.FullName = returnedUser[i].FullName }
+        if (returnedUser[i].UserName != null) { localUser.UserName = returnedUser[i].UserName }
+        if (returnedUser[i].Password != null) { localUser.Password = returnedUser[i].Password }
+    }
+    return localUser
+
+}
+
 module.exports = {
 
     signUpNavigation: function (req, res) {
@@ -26,11 +38,18 @@ module.exports = {
         res.render('pages/signup', pageData);
     },
 
+    UserDashboard: function (req, res) {
+        console.log("Navigated to the User dashboard page");
+        res.render('pages/dashboard');
+    },
+
     signInNavigation: function (req, res, next) {
+
+        console.log(req)
 
         let errors = [];
 
-        var username = req.body.username;
+        var username = req.body.UserName;
         var password = req.body.password;
 
         if (!username || !password) {
@@ -44,11 +63,11 @@ module.exports = {
 
         
 
-        //userModel.CheckUserExists(user, function (userCount) {
-        //    if (userCount !== 1) {
-        //        errors.push({ msg: "User not found / password incorrect" })
-        //    }
-        //}) 
+        userModel.CheckUserExists(user, function (userCount) {
+            if (userCount !== 1) {
+                errors.push({ msg: "User not found / password incorrect" })
+            }
+        }) 
 
         if (errors.length > 0) {
             res.render('pages/login', {
@@ -148,19 +167,21 @@ module.exports = {
 
     },
 
+    convertReturnedUserToLocal,
+
     //exporting properties and access methods
 
-    convertReturnedUserToLocal: function (returnedUser) {
+    //convertReturnedUserToLocal: function (returnedUser) {
 
-        for (let i in returnedUser) {
-            if (returnedUser[i]._id != null) { localUser._id = returnedUser[i]._id }
-            if (returnedUser[i].FullName != null) { localUser.FullName = returnedUser[i].FullName }
-            if (returnedUser[i].UserName != null) { localUser.UserName = returnedUser[i].UserName }
-            if (returnedUser[i].Password != null) { localUser.Password = returnedUser[i].Password }
-        }
-        return localUser
+    //    for (let i in returnedUser) {
+    //        if (returnedUser[i]._id != null) { localUser._id = returnedUser[i]._id }
+    //        if (returnedUser[i].FullName != null) { localUser.FullName = returnedUser[i].FullName }
+    //        if (returnedUser[i].UserName != null) { localUser.UserName = returnedUser[i].UserName }
+    //        if (returnedUser[i].Password != null) { localUser.Password = returnedUser[i].Password }
+    //    }
+    //    return localUser
 
-    },
+    //},
 
     localUser
 

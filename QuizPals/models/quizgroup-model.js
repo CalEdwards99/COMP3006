@@ -1,18 +1,19 @@
 var config = require("../config/config");
-var usersModel = require("../models/users-model") //TODO: user model as embedded document
+//var usersModel = require("../models/users-model") //TODO: user model as embedded document
 var mongoose = require('mongoose');
 const { ObjectID } = require("mongodb");
-const { quizGroup } = require("../controllers/quizgroup-controller");
+//const { quizGroup } = require("../controllers/quizgroup-controller");
 const quizModel = require("./quiz-model");
 var db = config.db;
 
 var quizScore = new mongoose.Schema({
-    _id: String,
+    _id: ObjectID,
     UserName: String,
     Score: String
 });
 
 var quizQuestion = new mongoose.Schema({
+    QuestionNumber: String,
     Question: String,
     A: String,
     B: String,
@@ -22,6 +23,7 @@ var quizQuestion = new mongoose.Schema({
 });
 
 var quiz = new mongoose.Schema({
+    //_id: ObjectID,
     QuizTitle: String,
     QuizCreator: String,
     Questions: [quizQuestion],
@@ -73,10 +75,16 @@ module.exports = {
     },
 
     FindQuizGroup: function (query ,callback) {
-        var quizGroups = QuizGroupTable.find(query);
-        quizGroups.exec(function (err, data) {
-            if (err) throw err;
-            return callback(data);        
+        //var quizGroups = QuizGroupTable.find(query);
+        QuizGroupTable.find(query, function (err, quizGroup) {
+        //quizGroups.exec(function (err, data) {
+            if (err) {
+                console.log(err)
+            }
+            else {
+                return callback(quizGroup);
+            }
+                    
         })
 
     },
@@ -131,7 +139,7 @@ module.exports = {
             return callback(quizgroup);
         })
 
-    }
+    },
 
 
 };

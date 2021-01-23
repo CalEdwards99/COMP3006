@@ -1,16 +1,16 @@
 const express = require('express');
 const passport = require("passport");
-const userController = require('../controllers/users-controller');
+//const userController = require('../controllers/users-controller');
 const router = express.Router();
 
 //register page
-router.post('/login', (req, res, next) => {
-    passport.authenticate('local', {
-        successRedirect: '/dashboard',
-        failureRedirect: '/users/login',
-        failureFlash: true,
-    })(req, res, next);
-})
+//router.post('/login', (req, res, next) => {
+//    passport.authenticate('local', {
+//        successRedirect: '/dashboard',
+//        failureRedirect: '/users/login',
+//        failureFlash: true,
+//    })(req, res, next);
+//})
 
 //{
     //console.log("login through index")

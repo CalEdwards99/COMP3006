@@ -8,6 +8,6 @@ var router = express.Router();
 router.post('/form', quizController.NavCreateQuiz);
 
 //creates a new quiz
-router.post('/create', quizController.createQuiz)
+//router.post('/create', quizController.createQuiz)
 
 module.exports = router;

@@ -1,7 +1,13 @@
 var config = require("../config/config");
 var quizScoreModel = require("./quizscore-model")
 var quizQuestionModel = require("./quizquestion-model")
+var quizGroupModel = require("./quizgroup-model")
+
+var quizGroupController = require("../controllers/quizgroup-controller")
 var mongoose = require('mongoose');
+const quizgroupModel = require("./quizgroup-model");
+const quizgroupController = require("../controllers/quizgroup-controller");
+const quizController = require("../controllers/quiz-controller");
 var db = config.db;
 
 var quizScore = new mongoose.Schema({
@@ -26,15 +32,6 @@ var quiz = new mongoose.Schema({
     UserScores: [quizScore]
 });
 
-//var quizSchema = new mongoose.Schema({
-//    QuizTitle: String,
-//    QuizCreator: String,
-//    Questions: [quizQuestionModel.quizQuestionSchema],
-//    UserScores: [quizScoreModel.quizScoreSchema]
-//});
-
-//QuizTable = mongoose.model('Quiz', quizSchema);
-
 module.exports = {
 
     //quizSchema,
@@ -43,18 +40,24 @@ module.exports = {
 
     createQuiz: function (quiz, callback) {
 
-        quiz = new QuizTable(quiz);
-        quiz.save(function (err, quiz) {
-            if (err) throw err;
-            return callback(quiz);
-        })
+        quizgroupModel.FindQuizGroup({ _id: quizGroupID }, function (returnedQuizGroup) {
+
+            //quizController.
+
+        });
 
     },
 
-    readQuizGroup: function () {
+    findQuiz: function (quizGroupID, quizName, callback) {
 
-        data = "Form data was read";
-        return data;
+        quizgroupModel.FindQuizGroup({ _id: quizGroupID }, function (returnedQuizGroup) {
+            var localQuiz = quizController.getQuizFromQuizGroup(quizName, returnedQuizGroup)
+
+            return callback(localQuiz)
+        });
+
+        //data = "Form data was read";
+        //return data;
     },
 
     updateQuizGroup: function () {

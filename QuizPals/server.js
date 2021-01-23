@@ -13,8 +13,8 @@ var path = require('path');
 
 //passport for user authentication
 const passport = require("passport")
-const LocalStrategy = require("./config/passport")(passport)
-
+require("./config/passport")(passport)
+//const passportLocalMongoose = require("passport-local-mongoose")
 
 //allows for session variables to be stored
 const session = require("express-session")
@@ -23,7 +23,7 @@ const session = require("express-session")
 const flash = require('connect-flash');
 
 var bodyParser = require('body-parser');
-const { group } = require('console');
+//const { group } = require('console');
 
 var app = express();
 
@@ -67,20 +67,6 @@ app.use(express.static('./public'));
 
 //this line is required to parse the request body
 app.use(express.json())
-
-//current User
-//app.use(function (req, res, next) {
-//    res.locals.currentUser = req.user;
-//    next();
-//})
-
-//MIDDLEWARE
-//function isLoggedIn(req, res, next) {
-//    if (req.isAuthenticated()) {
-//        return next();
-//    }
-//    res.redirect("pages/login");
-//}
 
 //this line defines the routers
 var indexRouter = require('./routes/index-route');
