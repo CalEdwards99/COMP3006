@@ -149,24 +149,24 @@ describe("QuizGroups", function () {
                 var localUser = quizgroupController.convertQuizGroupUserToLocal(returnedUser)
 
                 var quizScore = {
-                    userID: String,
-                    UserName: String,
-                    Score: String
+                    userID: "",
+                    UserName: "",
+                    Score: ""
                 };
 
                 var quizQuestion = {
-                    QuestionNumber: String,
-                    Question: String,
-                    A: String,
-                    B: String,
-                    C: String,
-                    D: String,
-                    CorrectAnswer: String
+                    QuestionNumber: "",
+                    Question: "",
+                    A: "",
+                    B: "",
+                    C: "",
+                    D: "",
+                    CorrectAnswer:""
                 };
 
                 var quiz = {
-                    QuizTitle: String,
-                    QuizCreator: String,
+                    QuizTitle: "",
+                    QuizCreator: "",
                     Questions: [quizQuestion],
                     UserScores: [quizScore]
                 };
@@ -240,6 +240,26 @@ describe("QuizGroups", function () {
                 })
             });
         });
+
+        it("Upsert a Quiz Group User to Quiz Group", (done) => {
+            this.timeout(20000)
+            var query = { _id: quizGroupID }
+            var userQuery = { _id: quizGroupUserID}
+            quizgroupModel.FindQuizGroup(query, function (returnedQuizGroup) {
+                usersModel.FindUser(userQuery, function (returnedUser) {
+
+                    var localQuiz = quizgroupController.upsertLoggedInUserToQuizGroup(returnedUser, returnedQuizGroup)
+
+                    quizgroupModel.updateQuizGroup(quizGroupID, localQuiz, function (dontBother) {
+                        quizgroupModel.FindQuizGroup(query, function (returnedQuizGroup) {
+                            done();
+                        })
+                    })
+                });
+            });
+        });
+
+
 
         it("Added a Quiz to the Quiz Group", (done) => {
             this.timeout(20000)
@@ -364,7 +384,7 @@ describe("QuizGroups", function () {
 
                 console.log(localQuiz.Quizzes)
 
-                localQuiz.Quizzes.splice(1,1)
+                //localQuiz.Quizzes.splice(1,1)
 
                 quizgroupModel.updateQuizGroup(quizGroupID ,localQuiz, function (callback) {
                     var updatedQuiz = quizgroupController.convertQuizGroupToLocal(callback)
@@ -393,7 +413,7 @@ describe("QuizGroups", function () {
 
                 LocalQuizGroup.Quizzes.push(localQuiz.UserScores)
 
-                LocalQuizGroup.Quizzes.splice(-1,1)//for some reason have to splice last quiz as it creates empty duplicates otherwise?
+                //LocalQuizGroup.Quizzes.splice(-1,1)//for some reason have to splice last quiz as it creates empty duplicates otherwise?
                 
 
                 quizgroupModel.updateQuizGroup(quizGroupID, LocalQuizGroup, function (callback) {
@@ -441,17 +461,17 @@ describe("QuizGroups", function () {
 
         });
 
-        it("Deleting the test group", (done) => {
+        //it("Deleting the test group", (done) => {
 
-            quizgroupModel.deleteQuizGroup(quizGroupID, function (QuizGroup) {
+        //    quizgroupModel.deleteQuizGroup(quizGroupID, function (QuizGroup) {
 
-                quizgroupModel.QuizGroupCount(QuizGroup, function (quizGroupCount) {
-                    expect(quizGroupCount).equal(0)
-                    done();
-                })
+        //        quizgroupModel.QuizGroupCount(QuizGroup, function (quizGroupCount) {
+        //            expect(quizGroupCount).equal(0)
+        //            done();
+        //        })
 
-            })
-        });
+        //    })
+        //});
 
     });
 })

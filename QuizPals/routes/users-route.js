@@ -25,7 +25,8 @@ router.post('/create', userController.createUser);
 //Login mechanism, authorises passport
 router.post('/login', (req, res, next) => {
     console.log("Authenticating with passport")
-    passport.authenticate('local', {      
+    passport.authenticate('local', {
+        session: true,
         successRedirect: '/user/login',
         failureRedirect: '/',
         failureFlash: true,

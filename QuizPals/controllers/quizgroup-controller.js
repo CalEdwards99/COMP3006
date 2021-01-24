@@ -2,6 +2,8 @@ var quizGroupModel = require('../models/quizgroup-model');
 //var userController = require('../controllers/users-controller');
 var mongoose = require('mongoose');
 const { ObjectID } = require('mongodb');
+const { convertReturnedUserToLocal } = require('./users-controller');
+const quizgroupModel = require('../models/quizgroup-model');
 
 //public controller properties
 const quizScore = {
@@ -41,10 +43,75 @@ const quizGroup = {
     Quizzes: [quiz]
 };
 
+// private functions (to be exported)
+function convertQuizGroupToLocal(returnedQuizGroup) {
 
+    for (let i in returnedQuizGroup) {
+        if (returnedQuizGroup[i]._id != null) { quizGroup._id = returnedQuizGroup[i]._id }
+        if (returnedQuizGroup[i].GroupName != null) { quizGroup.GroupName = returnedQuizGroup[i].GroupName }
+        if (returnedQuizGroup[i].Password != null) { quizGroup.Password = returnedQuizGroup[i].Password }
+        if (returnedQuizGroup[i].GroupMembers != null) { quizGroup.GroupMembers = returnedQuizGroup[i].GroupMembers }
+    }
+    return quizGroup
 
+}
 
-//End Private functions
+function convertQuizGroupUserToLocal(returnedQuizGroupUser) {
+
+    for (let i in returnedQuizGroupUser) {
+        if (returnedQuizGroupUser[i]._id != null) { quizGroupUser._id = returnedQuizGroupUser[i]._id }
+        if (returnedQuizGroupUser[i].FullName != null) { quizGroupUser.FullName = returnedQuizGroupUser[i].FullName }
+        if (returnedQuizGroupUser[i].UserName != null) { quizGroupUser.UserName = returnedQuizGroupUser[i].UserName }
+    }
+    return quizGroupUser
+
+}
+function convertQuizGroupQuizToLocal (returnedQuizGroupQuiz) {
+
+    for (let i in returnedQuizGroupQuiz) {
+        //console.log("quiz group ID: " + returnedQuizGroupQuiz[i]._id)
+        if (returnedQuizGroupQuiz[i]._id != null) { quiz.__id = returnedQuizGroupQuiz[i]._id }
+        if (returnedQuizGroupQuiz[i].QuizCreator != null) { quiz.QuizCreator = returnedQuizGroupQuiz[i].QuizCreator }
+        if (returnedQuizGroupQuiz[i].QuizTitle != null) { quiz.QuizTitle = returnedQuizGroupQuiz[i].QuizTitle }
+        if (returnedQuizGroupQuiz[i].Questions != null) { quiz.Questions = returnedQuizGroupQuiz[i].Questions }
+        if (returnedQuizGroupQuiz[i].UserScores != null) { quiz.UserScores = returnedQuizGroupQuiz[i].UserScores }
+    }
+    return quiz
+}
+
+// TODO: what should this name be?
+function upsertLoggedInUserToQuizGroup(user, returnedQuizGroup) {
+    var localQuiz = convertQuizGroupToLocal(returnedQuizGroup)
+    var localUser = convertReturnedUserToLocal(user)
+
+    console.log(localUser)
+    console.log(localUser._id)
+
+    var usersInQuizGroup = []
+
+    console.log()
+
+    for (let i in localQuiz.GroupMembers) {
+        var groupMember = convertReturnedUserToLocal(localQuiz.GroupMembers)
+        usersInQuizGroup.push(groupMember._id)
+    }
+
+    //console.log(usersInQuizGroup)
+    //console.log("index of" + usersInQuizGroup.indexOf(localUser._id))
+
+    //if (usersInQuizGroup.includes(localUser._id)) {
+    var isUserInQuizGroup = usersInQuizGroup.indexOf(localUser._id)
+    console.log(isUserInQuizGroup)
+    if (isUserInQuizGroup == -1) {
+        console.log("Adding user to Quiz Group")
+        localQuiz.GroupMembers.push(localUser)      
+    } else {
+        console.log("user already in quiz group")      
+    } 
+
+    return localQuiz
+    
+}
 
 
 module.exports = {
@@ -52,26 +119,26 @@ module.exports = {
     //TODO:CE Populate quiz group page
     quizGroupForm: function (req, res) {
 
-        var noData = { GroupName: "", Password: ""} //no groupname or password when loading
+        var noData = { GroupName: "", Password: "" } //no groupname or password when loading
         var message = ""; //no message when loading page
         let pageData = { quiz: noData, message: message };
 
         res.render('pages/CreateQuizGroup', pageData);
     },
 
-    createQuiz: function (req, res) {
+    //createQuiz: function (req, res) {
 
-        var quizGroup = req.body;
+    //    var quizGroup = req.body;
 
-        quizGroupModel.createQuizGroup(quizGroup, function (returningData) {
+    //    quizGroupModel.createQuizGroup(quizGroup, function (returningData) {
 
-            var message = "Quiz: " + returningData.GroupName + " saved to database";
-            let pageData = { quiz: returningData, message: message };
+    //        var message = "Quiz: " + returningData.GroupName + " saved to database";
+    //        let pageData = { quiz: returningData, message: message };
 
-            res.render("pages/CreateQuiz", pageData)
-            console.log("New QuizGroup Added");
-        });
-    },
+    //        res.render("pages/CreateQuiz", pageData)
+    //        console.log("New QuizGroup Added");
+    //    });
+    //},
 
     createQuizGroup: function (req, res) {
 
@@ -90,7 +157,7 @@ module.exports = {
     listAllQuizGroup: function (req, res) {
 
         //var localUser = userController.returnedQuizGroupUser()
-       console.log(req.body)
+        console.log(req.body)
 
         quizGroupModel.ListAllQuizGroups(function (returningData) {
 
@@ -116,9 +183,88 @@ module.exports = {
         res.send('<h1>' + deleteData + '</h1>');
     },
 
+    //---------Quiz Group Quizzes -------------//
+
+    AddQuizForm: function (req, res) {
+        
+        var quizGroupID = req.body
+
+        console.log(quizGroupID)
+
+        console.log("navigating to quiz create page")
+        res.render('pages/createquiz', quizGroupID);
+    },
+
+    AddQuiz: function (req, res) {
+        var localUser = convertQuizGroupUserToLocal(req.user)
+        console.log(localUser)
+
+        console.log(req.body)
+
+        var quizGroupID = req.body.quizGroupID
+        //console.log(req.user)
+
+        console.log(quizGroup)
+
+        var query = { _id: quizGroupID }
+
+        quizGroupModel.FindQuizGroup(query, function (returnedQuizGroup) {
+            var localQuizGroup = convertQuizGroupToLocal(returnedQuizGroup)
+
+            var quizScore = {
+                userID: localUser._id,
+                UserName: localUser.UserName,
+                Score: "0"
+            };
+
+            var quizQuestion = {
+                QuestionNumber: "1",
+                Question: "",
+                A: "",
+                B: "",
+                C: "",
+                D: "",
+                CorrectAnswer: ""
+            };
+
+            var quiz = {
+                QuizTitle: req.body.QuizTitle,
+                QuizCreator: localUser.FullName,
+                Questions: [quizQuestion],
+                UserScores: [quizScore]
+            };
+
+            console.log(quiz)
+
+            localQuizGroup.Quizzes.push(quiz)
+
+            console.log(localQuizGroup)
+
+            console.log(quizGroupID)
+
+            quizgroupModel.updateQuizGroup(quizGroupID, localQuizGroup, function (QuizGroup) {
+
+                quizgroupModel.FindQuizGroup(query, function (returnedQuizGroup) {
+                    var updatedQuizGroup = convertQuizGroupToLocal(returnedQuizGroup)
+
+                    //console.log(updatedQuizGroup)
+
+
+                })
+
+            })
+           
+        })
+
+        console.log("navigating to quiz create page")
+        res.render('pages/createquiz', {quizGroupID: quizGroupID});
+    },
+
     //Bespoke functions 
     insertUserToQuizGroup: function (req, res) {
         var quizGroup = req.body;
+
+        var query = { _id: quizGroup }
 
         quizGroupModel.insertUserToQuizGroup(quizGroup, function (returnedQuizGroupUser) {
 
@@ -135,7 +281,7 @@ module.exports = {
 
         console.log(quizGroup);
 
-        var query = {_id: quizGroup}
+        var query = { _id: quizGroup }
 
         quizGroupModel.FindQuizGroup(query, function (returningData) {
 
@@ -150,67 +296,45 @@ module.exports = {
     },
 
     dashboardQuizGroup: function (req, res) {
-        var quizGroup = req.body;
+        var user = req.user;
 
-        console.log(quizGroup);
+        console.log(user)
+        var quizGroupID = req.body;
 
-        var query = { _id: quizGroup }
+        console.log(quizGroupID);
 
-        quizGroupModel.FindQuizGroup(query, function (returningData) {
+        var query = { _id: quizGroupID }
 
-            let data = { quizGroup: returningData};
+        quizGroupModel.FindQuizGroup(query, function (returnedQuizGroup) {
+            var QuizGroup = upsertLoggedInUserToQuizGroup(user, returnedQuizGroup)
 
-            console.log(data)
+            quizGroupModel.updateQuizGroup(quizGroupID, QuizGroup, function (dontBother) {
+                quizGroupModel.FindQuizGroup(query, function (returnedQuizGroup) {
+                    let data = { quizGroup: returnedQuizGroup };
 
-            res.render("pages/QuizDashboard", data);
-            console.log("Login Successful");
+                    console.log(data)
+
+                    res.render("pages/QuizDashboard", data);
+                    console.log("Login Successful");
+                })
+            })
+
+            
         })
 
     },
-    
+
     //exporting properties and access methods
 
-    convertQuizGroupToLocal: function (returnedQuizGroup) {
-
-        for (let i in returnedQuizGroup) {
-            if (returnedQuizGroup[i]._id != null) { quizGroup._id = returnedQuizGroup[i]._id}
-            if (returnedQuizGroup[i].GroupName != null) { quizGroup.GroupName = returnedQuizGroup[i].GroupName}
-            if (returnedQuizGroup[i].Password != null) { quizGroup.Password = returnedQuizGroup[i].Password }
-            if (returnedQuizGroup[i].GroupMembers != null) { quizGroup.GroupMembers = returnedQuizGroup[i].GroupMembers }
-        }
-        return quizGroup
-
-    },
+    convertQuizGroupToLocal,
 
     quizGroup,
 
-    convertQuizGroupUserToLocal: function (returnedQuizGroupUser) {
-
-        for (let i in returnedQuizGroupUser) {
-            if (returnedQuizGroupUser[i]._id != null) { quizGroupUser._id = returnedQuizGroupUser[i]._id }
-            if (returnedQuizGroupUser[i].FullName != null) { quizGroupUser.FullName = returnedQuizGroupUser[i].FullName }
-            if (returnedQuizGroupUser[i].UserName != null) { quizGroupUser.UserName = returnedQuizGroupUser[i].UserName }
-        }
-        return quizGroupUser
-
-    },
+    convertQuizGroupUserToLocal,
 
     quizGroupUser,
 
-    convertQuizGroupQuizToLocal: function (returnedQuizGroupQuiz) {
-
-        for (let i in returnedQuizGroupQuiz) {
-            //console.log("quiz group ID: " + returnedQuizGroupQuiz[i]._id)
-            if (returnedQuizGroupQuiz[i]._id != null) { quiz.__id = returnedQuizGroupQuiz[i]._id }
-            if (returnedQuizGroupQuiz[i].QuizCreator != null) { quiz.QuizCreator = returnedQuizGroupQuiz[i].QuizCreator }
-            if (returnedQuizGroupQuiz[i].QuizTitle != null) { quiz.QuizTitle = returnedQuizGroupQuiz[i].QuizTitle }
-            if (returnedQuizGroupQuiz[i].Questions != null) { quiz.Questions = returnedQuizGroupQuiz[i].Questions }
-            if (returnedQuizGroupQuiz[i].UserScores != null) { quiz.UserScores = returnedQuizGroupQuiz[i].UserScores }
-        }
-
-        return quiz
-
-    },
+    convertQuizGroupQuizToLocal,
 
     quiz,
 
@@ -226,7 +350,9 @@ module.exports = {
 
     },
 
-    quizScore
+    quizScore,
+
+    upsertLoggedInUserToQuizGroup
 
 
 

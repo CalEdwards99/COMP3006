@@ -75,9 +75,7 @@ module.exports = {
     },
 
     FindQuizGroup: function (query ,callback) {
-        //var quizGroups = QuizGroupTable.find(query);
         QuizGroupTable.find(query, function (err, quizGroup) {
-        //quizGroups.exec(function (err, data) {
             if (err) {
                 console.log(err)
             }
@@ -126,20 +124,22 @@ module.exports = {
 
     },
 
-    insertUserToQuizGroup: function (quizgroup, callback) {
+    //insertUserToQuizGroup: function (user,quizgroup, callback) {
 
-        quizgroup = new QuizGroupTable(quizgroup);
+    //    quizgroup = new QuizGroupTable(quizgroup);
 
-        //pushes the user to the embbed document
-        quizgroup.GroupMembers.push({ quizGroupUserID: "", FullName: "", UserName: "" })
+        
 
-        //saves the quizgroup
-        quizgroup.save(function (err, quizgroup) {
-            if (err) throw err;
-            return callback(quizgroup);
-        })
+    //    //pushes the user to the embbed document
+    //    quizgroup.GroupMembers.push({ quizGroupUserID: user , FullName: "", UserName: "" })
 
-    },
+    //    //saves the quizgroup
+    //    quizgroup.save(function (err, quizgroup) {
+    //        if (err) throw err;
+    //        return callback(quizgroup);
+    //    })
+
+    //},
 
 
 };

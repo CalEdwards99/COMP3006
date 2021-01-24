@@ -9,8 +9,9 @@
     <h1>Create a Quiz</h1>
     <p>Create a Quiz Pals Quiz to challenge your friends!.</p>
 
-    <form name="form1" method="POST" action="/quiz/create">
+    <form name="form1" method="POST" action="/quizGroup/addQuiz">
     <p>Quiz Title</p>
+    <input type="hidden" name="QuizGroupID" value="<%= quizGroupID %>">
     <input type="text" name="QuizTitle">
     <input type="submit" value="Create a Quiz">
     </form>   

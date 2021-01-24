@@ -36,25 +36,27 @@ module.exports = function (passport) {
 
     )
 
+    //passport.serializeUser(function (user, done) {
+    //    done(null, user);
+    //});
+
+    //passport.deserializeUser(function (user, done) {
+    //    done(null, user);
+    //});
+
     passport.serializeUser(function (user, done) {
+        console.log("serializing user")
+        //done(null, user.id);
         done(null, user);
     });
 
     passport.deserializeUser(function (user, done) {
-        done(null, user);
+        console.log("deserializing user")
+        console.log(user)
+        done(null, user)
+        //UserModel.FindUser({ _id: user._id }, function (err, user) {
+        //    done(err, user);
+        //});
     });
-
-    //passport.serializeUser(function (user, done) {
-    //    console.log("serializing user")
-    //    done(null, user.id);
-    //});
-
-    //passport.deserializeUser(function (id, done) {
-    //    console.log("deserializing user")
-
-    //    UserModel.FindUser({ _id: id }, function (err, user) {
-    //        done(err, user);
-    //    });
-    //});
 }; 
 

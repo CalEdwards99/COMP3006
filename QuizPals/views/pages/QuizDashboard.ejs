@@ -18,6 +18,7 @@
             <tbody>           
                 <% for (i=0; i <quizGroup.length; i++) { %>
                     <tr>
+                        <td><%= quizGroup[i].GroupMembers.FullName %></td>
                         <td><%= quizGroup[i].GroupMembers %></td>
                     </tr>
                     <% } %>
@@ -26,8 +27,11 @@
     </br>
     </br>
     <b>Quizzes</b>
-    <form name="form1" method="POST" action="/quiz/form">
+    <% for (i=0; i <quizGroup.length; i++) { %>
+    <form name="form1" method="POST" action="/quizGroup/quiz">
+    <input type="hidden" name="quizGroupID" value="<%= quizGroup[i]._id %>">
     <input type="submit" value="Create a Quiz">
+     <% } %>
     </form>
 
 </body>

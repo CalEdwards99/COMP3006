@@ -16,6 +16,10 @@ router.post('/create', ensureAuthenticated, quizGroupController.createQuizGroup)
 //// delete data route
 //router.get('/delete/:id', quizGroupController.deleteQuizGroup);
 
+//display the create a quiz page
+router.post('/quiz', ensureAuthenticated, quizgroupController.AddQuizForm);
+router.post('/addQuiz', ensureAuthenticated, quizgroupController.AddQuiz);
+
 //display the quiz dashboard
 router.post('/dashboard', ensureAuthenticated,quizgroupController.dashboardQuizGroup);
 

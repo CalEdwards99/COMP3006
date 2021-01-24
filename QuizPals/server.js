@@ -16,11 +16,15 @@ const passport = require("passport")
 require("./config/passport")(passport)
 //const passportLocalMongoose = require("passport-local-mongoose")
 
+//var cookieSession = require('cookie-session');
+var cookieParser = require('cookie-parser')
+
 //allows for session variables to be stored
 const session = require("express-session")
 
 //flash messages display messages on screen
 const flash = require('connect-flash');
+
 
 var bodyParser = require('body-parser');
 //const { group } = require('console');
@@ -38,6 +42,14 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.set('view engine', 'ejs');
 
+//enabling parsing of cookies
+//app.use(express.cookieParser());
+app.use(cookieParser())
+
+//app.use(cookieSession({
+//    keys: ['key1', 'key2']
+//}));
+
 // Enable processing of post forms.
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -46,8 +58,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //express session
 app.use(session({
     secret: 'secret',
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
 }));
 
 app.use(passport.initialize());
