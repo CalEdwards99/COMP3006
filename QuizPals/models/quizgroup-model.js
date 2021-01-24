@@ -7,7 +7,7 @@ const quizModel = require("./quiz-model");
 var db = config.db;
 
 var quizScore = new mongoose.Schema({
-    _id: ObjectID,
+    userID: ObjectID,
     UserName: String,
     Score: String
 });
@@ -93,6 +93,7 @@ module.exports = {
                 console.log(err)
             }
             else {
+                console.log(updatedQuizGroup)
                 return callback(updatedQuizGroup.toObject())
             }
         });
