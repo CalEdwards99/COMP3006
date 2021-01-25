@@ -51,8 +51,8 @@ module.exports = function (passport) {
     });
 
     passport.deserializeUser(function (user, done) {
-        console.log("deserializing user")
-        console.log(user)
+        //console.log("deserializing user")
+        //console.log(user)
         done(null, user)
         //UserModel.FindUser({ _id: user._id }, function (err, user) {
         //    done(err, user);

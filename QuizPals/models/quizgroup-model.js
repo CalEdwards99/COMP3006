@@ -6,55 +6,70 @@ const { ObjectID } = require("mongodb");
 const quizModel = require("./quiz-model");
 var db = config.db;
 
-var quizScore = new mongoose.Schema({
-    userID: ObjectID,
-    UserName: String,
-    Score: String
+//----------Schemas-------------//
+
+const quizScore = new mongoose.Schema({
+    _id: ObjectID,
+    UserName: { type: String, default: "Quiz Pals" },
+    Score: { type: String, default: "0" }
 });
 
-var quizQuestion = new mongoose.Schema({
-    QuestionNumber: String,
-    Question: String,
-    A: String,
-    B: String,
-    C: String,
-    D: String,
-    CorrectAnswer: String
+const quizQuestion = new mongoose.Schema({
+    QuestionNumber: { type:String, default: "1" },
+    Question: { type: String, default: "Question 1" },
+    A: { type: String, default: "Answer 1" },
+    B: { type: String, default: "Answer 2" },
+    C: { type: String, default: "Answer 3" },
+    D: { type: String, default: "Answer 4" },
+    CorrectAnswer: { type: String, default: "A" }
 });
 
-var quiz = new mongoose.Schema({
-    //_id: ObjectID,
-    QuizTitle: String,
-    QuizCreator: String,
-    Questions: [quizQuestion],
-    UserScores: [quizScore]
+const quiz = new mongoose.Schema({
+    _id: ObjectID,
+    QuizTitle: { type: String, required: false },
+    QuizCreator: { type: String, required:false },
+    //Questions: {type: quizQuestion, default: () => ({}) },
+    Questions: {type: quizQuestion, required: false },
+    UserScores: {type: quizScore, required: false }
 });
 
-var quizGroupUser = new mongoose.Schema({
+const quizGroupUser = new mongoose.Schema({
     _id: ObjectID,
     FullName: String,
     UserName: String,
 });
 
-var quizGroupSchema = new mongoose.Schema({
+const quizGroupSchema = new mongoose.Schema({
     //_id: mongoose.Schema.Types.ObjectId,
     GroupName: String,
     Password: String,
+    //GroupMembers: { type: quizGroupUser, default: () => ({}) },
     GroupMembers: [quizGroupUser],
-    Quizzes: [quiz]
+    Quizzes: [{ type: quiz, required: false }]
 });
+
+//-------Model----------//
 
 const QuizGroupTable = mongoose.model('QuizGroup', quizGroupSchema);
 
 module.exports = {
+    //export the schema's
+
+    quizScore,
+
+    quizQuestion,
+
+    quiz,
+
+    quizGroupUser,
+
+    quizGroupSchema,
 
     QuizGroupTable,
 
     //"REGION" CRUD operations
 
     createQuizGroup: function (quizgroup, callback) {
-
-        //QuizGroupTable.init();
 
         quizgroup = new QuizGroupTable(quizgroup);
         quizgroup.save(function (err, quizgroup) {
@@ -88,16 +103,42 @@ module.exports = {
     },
 
     updateQuizGroup: function (quizGroupID, quizGroup, callback) {
-        QuizGroupTable.findByIdAndUpdate(quizGroupID, quizGroup, function(err, updatedQuizGroup) {
+
+
+
+        console.log("Finding By ID and updating")
+        console.log(quizGroupID)
+        console.log(quizGroup)
+
+        QuizGroupTable.findByIdAndUpdate(quizGroupID, quizGroup, function (err, updatedQuizGroup) {
+           
             if(err) {
                 console.log(err)
             }
             else {
-                console.log(updatedQuizGroup)
+                console.log("Updated Quiz Group")
+                //console.log(updatedQuizGroup.toObject)
+                //console.log(updatedQuizGroup.toObject())
                 return callback(updatedQuizGroup.toObject())
             }
         });
        
+    },
+
+    addQuizToQuizGroup: function (quizGroupID, quizGroup, callback) {
+
+
+        QuizGroupTable.findByIdAndUpdate(quizGroupID, quizGroup, function (err, updatedQuizGroup) {
+            if (err) {
+                console.log(err)
+            }
+            else {
+                //console.log(updatedQuizGroup)
+                //return callback(updatedQuizGroup)
+                return
+            }
+        });
+
     },
 
     deleteQuizGroup: function (quizGroupID, callback) {

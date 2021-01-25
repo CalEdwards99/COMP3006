@@ -137,7 +137,7 @@ module.exports = {
                     user.Password = returnedPassword
 
                     //save user
-                    userModel.createUser(user, function (returningData) {
+                    userModel.createUser(user, function (returningData) {                        
                         errors.push({ msg: "New User: " + returningData.UserName + " saved to database" });
                         req.flash('success_msg', 'You have now registered!')
                         let pageData = { user: returningData, errors: errors };

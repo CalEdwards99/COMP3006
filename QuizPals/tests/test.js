@@ -165,10 +165,10 @@ describe("QuizGroups", function () {
                 };
 
                 var quiz = {
-                    QuizTitle: "blank",
-                    QuizCreator: "blank",
-                    Questions: [quizQuestion],
-                    UserScores: [quizScore]
+                    QuizTitle: "First Quiz",
+                    QuizCreator: "Quiz Creator",
+                    //Questions: [quizQuestion],
+                    //UserScores: [quizScore]
                 };
 
                 var quizGroupUser = {
@@ -242,23 +242,23 @@ describe("QuizGroups", function () {
             });
         });
 
-        //it("Upsert a Quiz Group User to Quiz Group", (done) => {
-        //    this.timeout(20000)
-        //    var query = { _id: quizGroupID }
-        //    var userQuery = { _id: quizGroupUserID}
-        //    quizgroupModel.FindQuizGroup(query, function (returnedQuizGroup) {
-        //        usersModel.FindUser(userQuery, function (returnedUser) {
+        it("Upsert a Quiz Group User to Quiz Group", (done) => {
+            this.timeout(20000)
+            var query = { _id: quizGroupID }
+            var userQuery = { _id: quizGroupUserID}
+            quizgroupModel.FindQuizGroup(query, function (returnedQuizGroup) {
+                usersModel.FindUser(userQuery, function (returnedUser) {
 
-        //            var localQuiz = quizgroupController.upsertLoggedInUserToQuizGroup(returnedUser, returnedQuizGroup)
+                    var localQuiz = quizgroupController.upsertLoggedInUserToQuizGroup(returnedUser, returnedQuizGroup)
 
-        //            quizgroupModel.updateQuizGroup(quizGroupID, localQuiz, function (dontBother) {
-        //                quizgroupModel.FindQuizGroup(query, function (returnedQuizGroup) {
-        //                    done();
-        //                })
-        //            })
-        //        });
-        //    });
-        //});
+                    quizgroupModel.updateQuizGroup(quizGroupID, localQuiz, function (dontBother) {
+                        quizgroupModel.FindQuizGroup(query, function (returnedQuizGroup) {
+                            done();
+                        })
+                    })
+                });
+            });
+        });
 
 
 
@@ -289,8 +289,8 @@ describe("QuizGroups", function () {
                     var quiz = {
                         QuizTitle: "Capital Cities Quiz",
                         QuizCreator: localUser.UserName,
-                        Questions: [quizQuestion],
-                        UserScores: [quizScore]
+                        //Questions: [quizQuestion],
+                        //UserScores: [quizScore]
                     };
 
                     localQuiz.Quizzes.push(quiz)
