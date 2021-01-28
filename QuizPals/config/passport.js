@@ -13,10 +13,10 @@ module.exports = function (passport) {
 
                 var localUser = UserController.convertReturnedUserToLocal(returnedUser)
 
-                console.log(returnedUser)
+                //console.log(returnedUser)
 
                // localUser._id == null
-                console.log(localUser.UserName)
+                //console.log(localUser.UserName)
                 if (returnedUser.length == 0) {
                     return done(null, false, { message: 'No account for this username' });
                 }

@@ -84,33 +84,51 @@ function convertQuizGroupQuizToLocal(returnedQuizGroupQuiz) {
 
 // TODO: what should this name be?
 function upsertLoggedInUserToQuizGroup(user, returnedQuizGroup) {
+
+    var currentQuizGroupMemberIndex = 0
     var localQuiz = convertQuizGroupToLocal(returnedQuizGroup)
-    var localUser = convertReturnedUserToLocal(user)
+    var localUser = convertQuizGroupUserToLocal(user)
 
     console.log(localUser)
     console.log(localUser._id)
 
-    var usersInQuizGroup = []
+    var isUserinQuizGroup = false
 
-    console.log()
-
+    var localUserID = localUser._id.toString()
+    //var localUserID = localQuiz._id.toString()
     for (let i in localQuiz.GroupMembers) {
-        var groupMember = convertReturnedUserToLocal(localQuiz.GroupMembers)
-        usersInQuizGroup.push(groupMember._id)
+        //var currentGroupMembergroupMember = convertReturnedUserToLocal(localQuiz.GroupMembers)
+        var currentGroupMember = localQuiz.GroupMembers[currentQuizGroupMemberIndex]
+        //var groupMember = convertReturnedUserToLocal(localQuiz.GroupMembers)
+        var groupMemberID = currentGroupMember._id.toString()
+
+        if (groupMemberID == localUserID) {
+            console.log("user already in quiz group")
+            isUserinQuizGroup = true
+            return localQuiz
+        }
+
+        currentQuizGroupMemberIndex++
+
     }
 
-    //if (usersInQuizGroup.includes(localUser._id)) {
-    var isUserInQuizGroup = usersInQuizGroup.indexOf(localUser._id)
-    console.log(isUserInQuizGroup)
-    if (isUserInQuizGroup == -1) {
+    if (isUserinQuizGroup == false) { 
         console.log("Adding user to Quiz Group")
-        localQuiz.GroupMembers.push(localUser)
-        //quizGroupModel.updateQuizGroup()
-    } else {
-        console.log("user already in quiz group")
-    }
+        console.log(localUser)
 
-    return localQuiz
+        var newUser = {
+            _id: localUser._id,
+            FullName: localUser.FullName,
+            UserName: localUser.UserName
+
+        }
+
+        localQuiz.GroupMembers.push(newUser)
+        quizGroupModel.updateQuizGroup(localQuiz._id, localQuiz, function (returnedQuizGroup) {
+            return returnedQuizGroup
+        })
+        //local
+    }
 
 }
 
@@ -120,18 +138,15 @@ function calculateUserScores(returnedQuizGroup) {
     //var localUser = convertReturnedUserToLocal(user)
 
     //list all users in quiz group
-    var usersInQuizGroup = []
-    var userIDsInQuizGroup = []
     var userScores = []
-    var userIDsAndTotalScore = []
     var userNamesAndTotalScore = []
-
+    var quizgroupdgroupMemberIndex = 0 
     //loops over all of the group members
     for (let i in localQuiz.GroupMembers) {
-        var groupMember = convertReturnedUserToLocal(localQuiz.GroupMembers)
-        usersInQuizGroup.push(groupMember.UserNames)
-        userIDsInQuizGroup.push(groupMember._id)
-        var groupMemberID = groupMember._id.toString()
+        
+        var currentGroupMember = localQuiz.GroupMembers[quizgroupdgroupMemberIndex]
+        var groupMemberUserName = currentGroupMember.UserName.toString()
+        var groupMemberID = currentGroupMember._id.toString()
 
         var groupMemberScore = []
 
@@ -149,12 +164,9 @@ function calculateUserScores(returnedQuizGroup) {
             for (let us in userScores) {
                 var currentUserScore = userScores[currentUserScoreIndex]
 
-                console.log("currentUseScore")
-                console.log(currentUserScore)
-
                 currentUserScoreID = currentUserScore._id.toString()
 
-                if (currentUserScoreID === groupMemberID) {
+                if (currentUserScoreID == groupMemberID) {
                     groupMemberScore.push(currentUserScore.Score)
                 }
 
@@ -162,11 +174,14 @@ function calculateUserScores(returnedQuizGroup) {
             quizgroupdquizIndex++
         }
 
+        //loops over all of the current users scores in different quizzes
         for (let i = 0; i < groupMemberScore.length; i++) {
             sum += parseInt(groupMemberScore[i])
         }
 
-        userNamesAndTotalScore.push({Username : groupMember.UserName, HighScore : sum.toString() })
+        quizgroupdgroupMemberIndex++
+
+        userNamesAndTotalScore.push({ Username: groupMemberUserName, HighScore: sum.toString() })
 
     }
 
@@ -557,7 +572,7 @@ module.exports = {
             }
 
             var QuizGroup = upsertLoggedInUserToQuizGroup(user, returnedQuizGroup)
-            quizGroupModel.updateQuizGroup(quizGroupID, QuizGroup, function (dontBother) {
+            //quizGroupModel.updateQuizGroup(quizGroupID, QuizGroup, function (dontBother) {
                 quizGroupModel.FindQuizGroup(query, function (returnedQuizGroup) {
 
                     var localQuiz = convertQuizGroupToLocal(returnedQuizGroup)
@@ -572,7 +587,7 @@ module.exports = {
                     res.render("pages/QuizDashboard", data);
                     console.log("Navigated to Dashboard");
                 })
-            })
+            //})
 
         })
 

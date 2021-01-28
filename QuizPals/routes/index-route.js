@@ -12,6 +12,10 @@ const router = express.Router();
 //    })(req, res, next);
 //})
 
+router.post('/default', (req, res) => {
+    res.redirect('/');
+});
+
 //{
     //console.log("login through index")
     //res.render('pages/dashboard');
