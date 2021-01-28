@@ -10,12 +10,12 @@ var db = config.db;
 
 const quizScore = new mongoose.Schema({
     _id: ObjectID,
-    UserName: { type: String, default: "Quiz Pals" },
-    Score: { type: String, default: "0" }
+    UserName: String,
+    Score: String
 });
 
 const quizQuestion = new mongoose.Schema({
-    QuestionNumber: { type:String, default: "1" },
+    //QuestionNumber: { type:String, default: "1" },
     Question: { type: String, default: "Question 1" },
     A: { type: String, default: "Answer 1" },
     B: { type: String, default: "Answer 2" },
@@ -25,12 +25,12 @@ const quizQuestion = new mongoose.Schema({
 });
 
 const quiz = new mongoose.Schema({
-    _id: ObjectID,
+    //_id: ObjectID,
     QuizTitle: { type: String, required: false },
     QuizCreator: { type: String, required:false },
-    //Questions: {type: quizQuestion, default: () => ({}) },
-    Questions: {type: quizQuestion, required: false },
-    UserScores: {type: quizScore, required: false }
+    //Questions: {type: quizQuestion, required: false },
+    Questions: [quizQuestion],
+    UserScores: [quizScore]
 });
 
 const quizGroupUser = new mongoose.Schema({
@@ -45,6 +45,7 @@ const quizGroupSchema = new mongoose.Schema({
     Password: String,
     //GroupMembers: { type: quizGroupUser, default: () => ({}) },
     GroupMembers: [quizGroupUser],
+    //Quizzes: [{ type: quiz, required: false }]
     Quizzes: [{ type: quiz, required: false }]
 });
 
@@ -123,22 +124,6 @@ module.exports = {
             }
         });
        
-    },
-
-    addQuizToQuizGroup: function (quizGroupID, quizGroup, callback) {
-
-
-        QuizGroupTable.findByIdAndUpdate(quizGroupID, quizGroup, function (err, updatedQuizGroup) {
-            if (err) {
-                console.log(err)
-            }
-            else {
-                //console.log(updatedQuizGroup)
-                //return callback(updatedQuizGroup)
-                return
-            }
-        });
-
     },
 
     deleteQuizGroup: function (quizGroupID, callback) {

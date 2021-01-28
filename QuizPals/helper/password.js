@@ -20,8 +20,10 @@ module.exports = {
             if (err) throw err;
 
             if (isMatch) {
+                console.log("Password was correct")
                 return result(true)
             } else {
+                console.log("Password was incorrect")
                 return result(false)
             }
         })

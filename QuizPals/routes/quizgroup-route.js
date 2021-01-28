@@ -20,6 +20,17 @@ router.post('/create', ensureAuthenticated, quizGroupController.createQuizGroup)
 router.post('/quiz', ensureAuthenticated, quizgroupController.AddQuizForm);
 router.post('/addQuiz', ensureAuthenticated, quizgroupController.AddQuiz);
 
+//display the Quiz Question page
+//router.post('/question', ensureAuthenticated, quizgroupController.AddQuestionForm);
+router.post('/addQuestion', ensureAuthenticated, quizgroupController.AddQuestion);
+
+//Display the Quiz and Questions
+router.post('/takeQuiz', ensureAuthenticated, quizgroupController.TakeQuizForm);
+router.post('/nextQuestion', ensureAuthenticated, quizgroupController.NextQuestion);
+router.post('/finishQuiz', ensureAuthenticated, quizgroupController.FinishQuiz);
+
+
+
 //display the quiz dashboard
 router.post('/dashboard', ensureAuthenticated,quizgroupController.dashboardQuizGroup);
 
@@ -28,6 +39,7 @@ router.post('/dashboard', ensureAuthenticated,quizgroupController.dashboardQuizG
 router.get('/joinquizgroup', ensureAuthenticated,quizGroupController.listAllQuizGroup);
 
 //router.post('/login:id', quizGroupController.loginQuizGroup);
-router.post('/login', ensureAuthenticated,quizGroupController.loginQuizGroup);
+router.post('/login', ensureAuthenticated,quizGroupController.loginQuizGroupForm);
+router.post('/loginDashboard', ensureAuthenticated,quizGroupController.loginQuizGroup);
 
 module.exports = router;

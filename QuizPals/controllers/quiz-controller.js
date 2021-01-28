@@ -67,7 +67,7 @@ module.exports = {
             if (returnedQuizGroupQuiz[i].QuizTitle == quizName) {
 
             
-            if (returnedQuizGroupQuiz[i]._id != null) { quiz.__id = returnedQuizGroupQuiz[i]._id }
+            if (returnedQuizGroupQuiz[i]._id != null) { quiz._id = returnedQuizGroupQuiz[i]._id }
             if (returnedQuizGroupQuiz[i].QuizCreator != null) { quiz.QuizCreator = returnedQuizGroupQuiz[i].QuizCreator }
             if (returnedQuizGroupQuiz[i].QuizTitle != null) { quiz.QuizTitle = returnedQuizGroupQuiz[i].QuizTitle }
             if (returnedQuizGroupQuiz[i].Questions != null) { quiz.Questions = returnedQuizGroupQuiz[i].Questions }

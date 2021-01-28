@@ -29,10 +29,14 @@
             </tr>
             <% } %>
         </table>
-    </form>   
-    <% if(message!=null){ %>    
-        <div> <%= message %></div>
-    <% } %>
+    </form>
+     <%- include ('../partials/messages') %>
+
+    <form name="form2" method="GET" action="/user/dashboard">
+            <% if(quiz!=null){ %>
+                <input type="submit" value="Back To Login"></span>
+            <% } %>
+    </form>
 
 </body>
 </html>

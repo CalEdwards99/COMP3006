@@ -27,18 +27,19 @@
             </tbody>
         </table>    
          <% } %>
-    <form name="form1" method="POST" action="/quizgroup/dashboard">
+    <form name="form1" method="POST" action="/quizgroup/logindashboard">
         <% if(login!=null) { %>
         <% for (i=0; i <login.length; i++) { %>
         <p>Groupname</p>
-        <input type="hidden" id="_id" name="_id" value="<%= login[i]._id %>">
+        <input type="hidden" id="_quizGroupID" name="_quizGroupID" value="<%= login[i]._id %>">
         <input type="text" id="inputGroupName" value="<%= login[i].GroupName %>" />
         <input type="hidden" id="password" name="password" value="<%= login[i].Password %>">
         <p> Password </p>
-        <input type="password" id="inputPassword" />
+        <input type="password" id="inputPassword" name="inputPassword" />
         <input type="submit" value="Login">
          <% } %>
         <% } %>
     </form>
+    <%- include ('../partials/messages') %>
 </body>
 </html>

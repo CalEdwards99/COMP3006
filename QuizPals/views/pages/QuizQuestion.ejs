@@ -8,30 +8,35 @@
 <body>
     <h1>Create a Quiz</h1>
     <p>Create a Quiz Pals Quiz to challenge your friends!.</p>  
+                                            
+                        <h3>Quiz Title: <%= quiz.QuizTitle %></h1>
+                        <h3>Quiz Creator: <%= quiz.QuizCreator %></h3>
 
-     <form name="form1" method="POST" action="/quizquestion/create">
-     <p>Question Title</p>
-        <input type="text" name="QuestionTitle">
-        </br>
+     <form name="form1" method="POST" action="/quizgroup/AddQuestion">
+        <input type="hidden" name="quizGroupID" value="<%=quizGroup %>">
+        <input type="hidden" name="quizID" value="<%=quiz._id %>">
+        <input type="hidden" name="questionNumber" value="<%=questionNumber %>">
+        <p> Question <%=questionNumber %>: <input type="text" name="QuestionTitle"></p>
         <p>Answers</p>
         <p>A: <input type="text" name="Answer1"></p>
         <p>B:<input type="text" name="Answer2"></p>
         <p>C:<input type="text" name="Answer3"></p>
         <p>D:<input type="text" name="Answer4"></p>
-
-        </br>
         <p>Correct Answer</p>
         <select name="CorrectAnswer">
             <option value="A">A</option>
             <option value="B">B</option>
             <option value="C">C</option>
             <option value="D">D</option>
-</select>
+        </select>
         </br>
         </br>
         <input type="submit" value="Add Question To Quiz">
+    </form>
 
-    </form>  
-
+    <form name="form2" method="POST" action="/quizgroup/dashboard">
+    <input type="hidden" name="_quizGroupID" value="<%=quizGroup %>">
+    <input type="Submit" value="Finish Creating Quiz";"><p>* Quizzes are not editable to prevent cheating, ensure quiz is complete before submitting</p>
+    </form>
 </body>
 </html>

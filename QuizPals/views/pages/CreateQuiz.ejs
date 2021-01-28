@@ -10,16 +10,13 @@
     <p>Create a Quiz Pals Quiz to challenge your friends!.</p>
 
     <form name="form1" method="POST" action="/quizGroup/addQuiz">
-    <p>Quiz Title</p>
+    <p>Quiz Title: <input type="text" name="QuizTitle"></p>
     <input type="hidden" name="QuizGroupID" value="<%= quizGroupID %>">
-    <input type="text" name="QuizTitle">
+    
     <input type="submit" value="Create a Quiz">
     </form>   
 
-     <form name="form1" method="POST" action="/quizquestion/form">
-
-     <input type="submit" value="Add a Question to the Quiz">
-
+     <form name="form1" method="POST" action="/quizGroup/addQuestionForm">
     </form>  
 
 </body>

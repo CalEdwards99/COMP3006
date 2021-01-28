@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Quiz Pals</title>
+</head>
+<body>
+<% if(quiz!=null) { %>
+   <h1><%= quiz.QuizTitle %></h1>
+   <h3>Quiz Creator: <%= quiz.QuizCreator %></h3>
+
+   <input type="hidden" name="talliedScore" value="<%=currentScore %>" readonly>
+
+   <% if(question!=null) { %>
+
+     <form name="form1" method="POST" action="/quizgroup/nextquestion">
+     <input type="hidden" id="_id" name="_id" value="<%= quizGroupID %>">
+     <input type="hidden" id="_quizID" name="_quizID" value="<%= quizID  %>">
+     <input type="hidden" name="questionNumber" value="<%=questionNumber %>" readonly>
+     <input type="hidden" name="currentScore" value="<%=currentScore %>" readonly>
+    
+     <p>Question <%=questionNumber %>: <%=question.Question %></p>
+   
+        </br>
+        <p>Answers</p>
+        <span><b>A: </b><p><%=question.A %></p></span>
+        <span><b>B: </b> <p><%=question.B %></p></span>
+        <span><b>C: </b> <p><%=question.C %></p></span>
+        <span><b>D: </b> <p><%=question.D %></p></span>
+
+        </br>
+        <p>My Answer</p>
+        <input type="hidden" name="CorrectAnswer" value="<%=question.CorrectAnswer %>" readonly>
+        <select name="UserAnswer">
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+        </select>
+        </br>
+        </br>
+        <input type="submit" value="Next Question">
+        </form>  
+    <% } %>
+
+     <% if(question==null) { %>
+
+     
+     <p>Final Score <%=currentScore %></p>
+        <form name="form1" method="POST" action="/quizgroup/finishquiz">
+            <input type="hidden" id="_id" name="_id" value="<%= quizGroupID %>">
+            <input type="hidden" id="_quizID" name="_quizID" value="<%= quizID  %>">
+            <input type="hidden" name="finalScore" value="<%=currentScore %>" readonly>
+            <input type="submit" value="Finish Quiz">
+        </form>  
+    <% } %>
+    
+ <% } %>
+
+
+</body>
+</html>

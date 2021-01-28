@@ -10,6 +10,7 @@ router.get('/signup', userController.signUpNavigation);
 
 // sign in route
 router.get('/login', ensureAuthenticated, userController.UserDashboard);
+router.get('/dashboard', ensureAuthenticated, userController.UserDashboard);
 
 
 
