@@ -13,18 +13,22 @@ module.exports = function (passport) {
 
                 var localUser = UserController.convertReturnedUserToLocal(returnedUser)
 
-                if (!returnedUser) {
+                console.log(returnedUser)
+
+               // localUser._id == null
+                console.log(localUser.UserName)
+                if (returnedUser.length == 0) {
                     return done(null, false, { message: 'No account for this username' });
                 }
 
                 
                 //passwordHelper.comparePasswords(password, userPassword)
                 passwordHelper.comparePasswords(password, localUser.Password, function (result) {
-                    if (result = true) {
+                    if (result == true) {
                         return done(null, returnedUser);
                     }
 
-                    if (result = false) {
+                    if (result == false) {
                         return done(null, false, { message: 'Password is incorrect' });
                     }
 
