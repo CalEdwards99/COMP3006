@@ -169,7 +169,7 @@ function calculateUserScores(returnedQuizGroup) {
                 if (currentUserScoreID == groupMemberID) {
                     groupMemberScore.push(currentUserScore.Score)
                 }
-
+                currentUserScoreIndex++
             }
             quizgroupdquizIndex++
         }
